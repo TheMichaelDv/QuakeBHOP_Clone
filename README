@@ -1,0 +1,7 @@
+Simple Custom Built Engine (Hopefully)
+Mainly going to be using Moderngl and Moderngl_window
+Documentation-
+https://moderngl.readthedocs.io/
+https://moderngl-window.readthedocs.io/en/latest/
+https://github.com/moderngl/moderngl-window/tree/master/examples
+Examples can be found on the their repo but I included some in the example folder.
