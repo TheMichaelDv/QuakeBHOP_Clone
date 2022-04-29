@@ -63,3 +63,6 @@ class CameraWindow(mglw.WindowConfig):
 
     def resize(self, width: int, height: int):
         self.camera.projection.update(aspect_ratio=self.wnd.aspect_ratio)
+class cubes():
+    def __init__(self, ):
+        self.cubes = []
