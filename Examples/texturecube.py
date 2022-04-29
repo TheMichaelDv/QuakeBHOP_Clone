@@ -32,8 +32,10 @@ class TextureArrayExample(CameraWindow):
         self.ctx.enable_only(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
 
         #modelview = Matrix44.identity(dtype='f4')
-        
-        rotation = Matrix44.from_eulers((abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time))), dtype='f4')
+        #(abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time))), dtype='f4'
+        num = abs(1/16 * math.sin(64 * time))
+        num1 = abs(1/16 * math.sin(64 * time) * math.sin(64 * math.sin(64 * time) * time))
+        rotation = Matrix44.from_eulers((num, num, num), dtype = 'f4')
         translation = Matrix44.from_translation((0.0, 0.0, -3.5), dtype='f4')
         modelview = translation * rotation
         
