@@ -46,6 +46,6 @@ void main() {
     vec3 ambient = ambientStrength * vec3(1,1,1);
 
     vec3 result = ambient * vec3(1,1,1);
-    fragColor = vec4(result,1);// * color; //This determines final color
+    fragColor = vec4(result,1) * vec4(1,1,0.5,0.5);// * color This determines final color. Usually we define a uniform so we can modify it in python
 }
 #endif
