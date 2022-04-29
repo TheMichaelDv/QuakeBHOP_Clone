@@ -31,7 +31,7 @@ class TextureArrayExample(CameraWindow):
     def render(self, time: float, frametime: float):
         self.ctx.enable_only(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
 
-        #modelview = Matrix44.identity(dtype='f4')
+        modelview = Matrix44.identity(dtype='f4')
         #(abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time))), dtype='f4'
         num = abs(1/16 * math.sin(64 * time))
         num1 = abs(1/16 * math.sin(64 * time) * math.sin(64 * math.sin(64 * time) * time))
