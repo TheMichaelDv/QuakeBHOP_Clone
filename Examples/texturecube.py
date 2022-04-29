@@ -23,7 +23,7 @@ class TextureArrayExample(CameraWindow):
         self.wnd.mouse_exclusivity = True
         self.num_layers = 1
         self.cube = geometry.cube(size = (4, 4, 4))
-        self.texture = self.load_texture_array('help.png', layers=self.num_layers, mipmap=True, anisotrpy=4.0)
+        self.texture = self.load_texture_array('ShiaLaBeouf.png', layers=self.num_layers, mipmap=True, anisotrpy=4.0)
         self.prog = self.load_program('texture.glsl')
         self.prog['texture0'].value = 0
         self.prog['num_layers'].value = 1
