@@ -7,6 +7,8 @@ import moderngl_window
 from moderngl_window import geometry
 from camera import CameraWindow
 
+import math
+
 
 class TextureArrayExample(CameraWindow):
     """
@@ -20,9 +22,8 @@ class TextureArrayExample(CameraWindow):
         super().__init__(**kwargs)
         self.wnd.mouse_exclusivity = True
         self.num_layers = 1
-        self.cube = geometry.cube(size=(2, 2, 2))
-        self.texture = self.load_texture_array(
-            'help.png', layers=self.num_layers, mipmap=True, anisotrpy=8.0)
+        self.cube = geometry.cube(size = (4, 4, 4))
+        self.texture = self.load_texture_array('help.png', layers=self.num_layers, mipmap=True, anisotrpy=4.0)
         self.prog = self.load_program('texture.glsl')
         self.prog['texture0'].value = 0
         self.prog['num_layers'].value = 1
@@ -32,7 +33,7 @@ class TextureArrayExample(CameraWindow):
 
         #modelview = Matrix44.identity(dtype='f4')
         
-        rotation = Matrix44.from_eulers((time, time, time), dtype='f4')
+        rotation = Matrix44.from_eulers((abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time))), dtype='f4')
         translation = Matrix44.from_translation((0.0, 0.0, -3.5), dtype='f4')
         modelview = translation * rotation
         
