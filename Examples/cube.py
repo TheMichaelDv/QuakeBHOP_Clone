@@ -93,6 +93,7 @@ class CubeAndSphereSimple(CameraWindow):
         self.cube = geometry.cube(size=(2, 2, 2)) #need to have two different set of variables
         self.sphere = geometry.sphere(radius = 4)
         self.prog = self.load_program('Simple Shader.glsl')
+        self.prog1 = self.load_program('Simple Shader.glsl')
         #self.prog['color'].value = 1.0, 1.0, 0.5, 0.5
 
     def render(self, time: float, frametime: float):
@@ -104,7 +105,7 @@ class CubeAndSphereSimple(CameraWindow):
         if (time - int(time) <= 0.05):
             print("Cube", time, time - int(time), num)
         '''
-        translation = Matrix44.from_translation((0.0, 0.0, -10), dtype='f4')
+        translation = Matrix44.from_translation((0.0, 0.0, 0), dtype='f4')
         modelview = translation * rotation
         
         #also requires different shader instances for moving
@@ -112,8 +113,18 @@ class CubeAndSphereSimple(CameraWindow):
         self.prog['m_model'].write(modelview)
         self.prog['m_camera'].write(self.camera.matrix)
 
+
+        num = math.sin(1/2 * math.pi * time)
+        rotation = Matrix44.from_eulers((num, num, num), dtype='f4')
+        translation = Matrix44.from_translation((0.0, -10.0, 0), dtype='f4')
+        modelview = translation * rotation
+        
+        self.prog1['m_proj'].write(self.camera.projection.matrix)
+        self.prog1['m_model'].write(modelview)
+        self.prog1['m_camera'].write(self.camera.matrix)
+
         self.cube.render(self.prog)
-        self.sphere.render(self.prog)
+        self.sphere.render(self.prog1)
 
 if __name__ == '__main__':
     moderngl_window.run_window_config(CubeAndSphereSimple)
