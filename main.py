@@ -1,5 +1,9 @@
 '''
 From Jason Li @2021
+
+Dummy Code lmao
+
+Real code incoming
 '''
 from matplotlib import pyplot as plt
 import numpy as np
