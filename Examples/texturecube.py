@@ -42,7 +42,7 @@ class TextureArrayExample(CameraWindow):
         num = abs(1/16 * math.sin(64 * time))
         num1 = abs(1/16 * math.sin(64 * time) * math.sin(64 * math.sin(64 * time) * time))
         rotation = Matrix44.from_eulers((num, num, num), dtype = 'f4')
-        translation = Matrix44.from_translation((0.0, 0.0, 0.0), dtype='f4')
+        translation = Matrix44.from_translation((0.0, 0.0, -4.0), dtype='f4')
         modelview = translation * rotation
         
         #print(modelview)
@@ -54,7 +54,7 @@ class TextureArrayExample(CameraWindow):
         num = abs(1/16 * math.sin(64 * time))
         num1 = abs(1/16 * math.sin(64 * time) * math.sin(64 * math.sin(64 * time) * time))
         rotation = Matrix44.from_eulers((num, num, num), dtype = 'f4')
-        translation = Matrix44.from_translation((0.0, 10.0, 0.0), dtype='f4')
+        translation = Matrix44.from_translation((0.0, 10.0, -4.0), dtype='f4')
         modelview = translation * rotation
         
         self.prog1['m_proj'].write(self.camera.projection.matrix)
