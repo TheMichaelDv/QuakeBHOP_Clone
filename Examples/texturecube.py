@@ -23,10 +23,16 @@ class TextureArrayExample(CameraWindow):
         self.wnd.mouse_exclusivity = True
         self.num_layers = 1
         self.cube = geometry.cube(size = (4, 4, 4))
+        self.sphere = geometry.sphere(radius = 2)
         self.texture = self.load_texture_array('ShiaLaBeouf.png', layers=self.num_layers, mipmap=True, anisotrpy=4.0)
         self.prog = self.load_program('texture.glsl')
+        self.prog1 = self.load_program('texture.glsl')
         self.prog['texture0'].value = 0
         self.prog['num_layers'].value = 1
+        self.prog1['texture0'].value = 0
+        self.prog1['num_layers'].value = 1
+        #self.prog['color'].value = 1.0, 1.0, 0.5, 0.5
+        #self.prog1['color'].value = 1.0, 1.0, 0.5, 0.5
 
     def render(self, time: float, frametime: float):
         self.ctx.enable_only(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
@@ -36,7 +42,7 @@ class TextureArrayExample(CameraWindow):
         num = abs(1/16 * math.sin(64 * time))
         num1 = abs(1/16 * math.sin(64 * time) * math.sin(64 * math.sin(64 * time) * time))
         rotation = Matrix44.from_eulers((num, num, num), dtype = 'f4')
-        translation = Matrix44.from_translation((0.0, 0.0, -3.5), dtype='f4')
+        translation = Matrix44.from_translation((0.0, 0.0, 0.0), dtype='f4')
         modelview = translation * rotation
         
         #print(modelview)
@@ -45,8 +51,20 @@ class TextureArrayExample(CameraWindow):
         self.prog['m_camera'].write(self.camera.matrix)
         self.prog['time'].value = time
 
+        num = abs(1/16 * math.sin(64 * time))
+        num1 = abs(1/16 * math.sin(64 * time) * math.sin(64 * math.sin(64 * time) * time))
+        rotation = Matrix44.from_eulers((num, num, num), dtype = 'f4')
+        translation = Matrix44.from_translation((0.0, 10.0, 0.0), dtype='f4')
+        modelview = translation * rotation
+        
+        self.prog1['m_proj'].write(self.camera.projection.matrix)
+        self.prog1['m_model'].write(modelview)
+        self.prog1['m_camera'].write(self.camera.matrix)
+        self.prog1['time'].value = time
+        
         self.texture.use(location=0)
         self.cube.render(self.prog)
+        self.sphere.render(self.prog1)
 
 
 if __name__ == '__main__':
