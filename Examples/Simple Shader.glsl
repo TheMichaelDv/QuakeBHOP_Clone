@@ -1,6 +1,7 @@
 #version 330
 
 //https://stackoverflow.com/questions/4421261/vertex-shader-vs-fragment-shader
+//generally shaders determines color of a shape. Specifically Vertex Shaders determine the color of vertices in the object, say the 8 corners of the block. The Fragment Shader defines the color between the vertices, the faces of the cube for example.
 
 #if defined VERTEX_SHADER
 
