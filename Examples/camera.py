@@ -1,4 +1,6 @@
+from gettext import translation
 import moderngl_window as mglw
+from pyrr import Matrix44
 from moderngl.program import Program
 from moderngl_window.scene.camera import KeyboardCamera, OrbitCamera
 from moderngl_window.context.base import BaseKeys
@@ -16,9 +18,6 @@ class CameraWindow(mglw.WindowConfig):
     def key_event(self, key, action, modifiers):
         keys = self.wnd.keys
 
-        if self.camera_enabled:
-            #self.camera.key_input(key, action, modifiers)
-            pass
         if key == keys.D:
             if action == self.keys.ACTION_PRESS:
                 self.camera.move_right(True)
@@ -84,8 +83,7 @@ class cubes():
         for cube in self.cubes:
             if cube.name == name:
                 cube.render(prog)
-
-class shaders():
+class shader():
     '''
     removes the need to spam the
     self.prog1['m_proj'].write(self.camera.projection.matrix)
@@ -95,13 +93,50 @@ class shaders():
 
     also simplifies the code
     '''
+    name = None
+    rotation = Matrix44.identity()
+    translation = Matrix44.identity()
+    def __init__(self):
+        self.shader = None
+    def __init__(self, shader: Program, name):
+        self.shader = shader
+        self.name = name
+    @property
+    def shader(self):
+        return self.shader
+    @property
+    def name(self):
+        return self.name
+    @property
+    def translation(self):
+        return self.translation
+    @property
+    def rotation(self):
+        return self.rotation
+    @shader.setter
+    def shader(self, shader: Program):
+        self.shader = shader
+    @shader.deleter
+    def shader(self):
+        self.shader.release()
+    @name.setter
+    def name(self, name):
+        self.name = name
+    @translation.setter
+    def translation(self, matrix):
+        self.translation = matrix
+    @rotation.setter
+    def rotation(self, matrix):
+        self.rotation = matrix
+    def write(self, data, field):
+        self.shader[field].write(data)
+    def run(self, camera, matrix):
+        model = self.translation * self.rotation
+        self.shader['m_proj'].write(camera)
+        self.shader['m_model'].write(model)
+        self.shader['m_camera'].write(matrix)
 
-    def __init__(self) -> None:
-        self.shaders = []
-    def __init__(self, shader: Program):
-        self.shaders = [(shader, True)]
-    def addshader(self, shader: Program, third = True, ):
-        self.shaders.append((shader,True))
-    def write(self, data, field, shader):
-        pass
-    
+
+def shaders(shade, camera, model, matrix):
+    for s in shade:
+        s.run(camera, model, matrix)

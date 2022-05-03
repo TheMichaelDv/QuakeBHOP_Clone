@@ -17,7 +17,7 @@ class TextureArrayExample(CameraWindow):
     """
     title = "Texture Array"
     resource_dir = (Path(__file__).parent).resolve()
-
+ 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.wnd.mouse_exclusivity = True
@@ -41,7 +41,7 @@ class TextureArrayExample(CameraWindow):
         #(abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time))), dtype='f4'
         num = abs(1/16 * math.sin(64 * time))
         num1 = abs(1/16 * math.sin(64 * time) * math.sin(64 * math.sin(64 * time) * time))
-        rotation = Matrix44.from_eulers((num, num, num), dtype = 'f4')
+        rotation = Matrix44.from_eulers((num, num, num), dtype = 'f4') #TODO what is euler angles, Ima have a fun time learning that shit
         translation = Matrix44.from_translation((0.0, 0.0, -4.0), dtype='f4')
         modelview = translation * rotation
         
