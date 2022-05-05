@@ -1,8 +1,10 @@
+from os import truncate
 from pathlib import Path
-from pyrr import Matrix44
+from turtle import pos
+from pyrr import Matrix44, Vector3
 
 import moderngl
-
+import pygame
 import moderngl_window
 from moderngl_window import geometry
 from camera import *
@@ -36,6 +38,8 @@ class TextureArrayExample(CameraWindow):
 
     def render(self, time: float, frametime: float):
         self.ctx.enable_only(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
+        
+        time = self.wnd.frames
 
         modelview = Matrix44.identity(dtype='f4')
         #(abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time))), dtype='f4'
@@ -65,6 +69,12 @@ class TextureArrayExample(CameraWindow):
         self.texture.use(location=0)
         self.cube.render(self.prog)
         self.sphere.render(self.prog1)
+         
+        print(time)
+        p = self.camera.position
+        if time % 3 == 0:
+            y = -2 * 0.5 * math.pow((time/3*0.05),2)
+            self.camera.set_position(p.x,p.y+y,p.z)
 
 
 if __name__ == '__main__':
