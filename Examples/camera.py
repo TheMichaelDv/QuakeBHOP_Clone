@@ -46,6 +46,7 @@ class CameraWindow(mglw.WindowConfig):
         #jump
         elif key == keys.J: 
             if action == self.keys.ACTION_PRESS:
+                print("J")
                 p = self.camera.position
                 t = self.wnd.frames
                 g = -9.8 / 100
@@ -67,6 +68,7 @@ class CameraWindow(mglw.WindowConfig):
             self.wnd.mouse_exclusivity = self.camera_enabled
             self.wnd.cursor = not self.camera_enabled
         elif key == keys.SPACE:
+            print("Space")
             if action == self.keys.ACTION_PRESS:
                 self.camera.move_up(True)
             if action == self.keys.ACTION_RELEASE:
