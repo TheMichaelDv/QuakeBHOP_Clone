@@ -73,7 +73,7 @@ class TextureArrayExample(CameraWindow):
         p = self.camera.position
         #print(p.y)
         # sf = s0 + vot + 1/2at^2
-        # vf = v0 + 
+        # vf = v0 + at
         """
         t = time
         g = -9.8 / 100
@@ -86,11 +86,9 @@ class TextureArrayExample(CameraWindow):
             print(v)
             print(" ")
             self.camera.set_position(p.x,-sf / 5,p.z)
-        """
         if time % 1 == 0:
             sf = 2 * math.sin(time / 10)
             self.camera.set_position(p.x,p.y -sf / 5,p.z)
-        """
         else: 
             t -= time
             v = v0 + g * t
