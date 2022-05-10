@@ -80,10 +80,14 @@ class cubes():
         for cube in self.cubes:
             if cube.name == name:
                 cube.release(True)
-    def addprog(self, prog: Program, name):
+    def addprog(self, shaders, name):
+        rend = None
+        for shade in shaders:
+            if shade.name == name:
+                rend = shade
         for cube in self.cubes:
-            if cube.name == name:
-                cube.render(prog)
+            if cube.name == name and rend != None:
+                cube.render(rend)
 class shader():
     '''
     removes the need to spam the
@@ -137,7 +141,9 @@ class shader():
         self.shader['m_model'].write(model)
         self.shader['m_camera'].write(matrix)
 
-
-def shaders(shade, camera, model, matrix):
-    for s in shade:
-        s.run(camera, model, matrix)
+class shaders():
+    def __init__(self) -> None:
+        self.shaders = []
+    def run(self, camera) -> None:
+        for n in shaders:
+            n.run(camera)

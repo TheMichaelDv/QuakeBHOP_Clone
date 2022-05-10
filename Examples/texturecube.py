@@ -73,7 +73,7 @@ class TextureArrayExample(CameraWindow):
         print(time)
         p = self.camera.position
         if time % 3 == 0:
-            y = -2 * 0.5 * math.pow((time/3*0.05),2)
+            y = -0.98 * 0.5 * math.pow((time/3*0.05),2)
             self.camera.set_position(p.x,p.y+y,p.z)
 
 
