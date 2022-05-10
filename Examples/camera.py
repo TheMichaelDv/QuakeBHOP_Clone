@@ -6,6 +6,8 @@ from moderngl_window.scene.camera import KeyboardCamera, OrbitCamera
 from moderngl_window.context.base import BaseKeys
 from moderngl_window.opengl.vao import VAO
 
+import math
+
 class CameraWindow(mglw.WindowConfig):
     """Base class with built in 3D camera support"""
 
@@ -41,11 +43,32 @@ class CameraWindow(mglw.WindowConfig):
                 self.camera.move_backward(True)
             if action == self.keys.ACTION_RELEASE:
                 self.camera.move_backward(False)
+        #jump
+        elif key == keys.J: 
+            if action == self.keys.ACTION_PRESS:
+                print("J")
+                p = self.camera.position
+                t = self.wnd.frames
+                g = -9.8 / 100
+                v0 = 4
+                v = v0 + g * t
+                s0 = 0
+                sf = s0 + v0 * t + 1/2 * g * math.pow(t, 2)
+                c = True
+                while(c):
+                    if t % 1 == 0 and v > -4:
+                        self.camera.move_up(False)
+                        self.camera.move_down(False)
+                        self.camera.set_position(p.x,-sf / 5,p.z)
+                        t += 1/10
+                    else: 
+                        c = False
         elif key == keys.F:
             self.camera_enabled = not self.camera_enabled
             self.wnd.mouse_exclusivity = self.camera_enabled
             self.wnd.cursor = not self.camera_enabled
         elif key == keys.SPACE:
+            print("Space")
             if action == self.keys.ACTION_PRESS:
                 self.camera.move_up(True)
             if action == self.keys.ACTION_RELEASE:
