@@ -23,15 +23,18 @@ class TextureArrayExample(CameraWindow):
         super().__init__(**kwargs)
         self.wnd.mouse_exclusivity = True
         self.num_layers = 1
-        self.cube = geometry.cube(size = (40, 40, 40))
+
+        self.cube = geometry.sphere(radius = 10)
         self.sphere = geometry.sphere(radius = 2)
-        self.texture = self.load_texture_array('ShiaLaBeouf.png', layers=self.num_layers, mipmap=True, anisotrpy=4.0)
+
+        self.texture = self.load_texture_array('67-674595_mike-from-monsters-inc-mike-wazowski.png', layers=self.num_layers, mipmap=True, anisotrpy=4.0)
         self.prog = self.load_program('texture.glsl')
         self.prog1 = self.load_program('texture.glsl')
         self.prog['texture0'].value = 0
         self.prog['num_layers'].value = 1
         self.prog1['texture0'].value = 0
         self.prog1['num_layers'].value = 1
+
         #self.prog['color'].value = 1.0, 1.0, 0.5, 0.5
         #self.prog1['color'].value = 1.0, 1.0, 0.5, 0.5
 
@@ -39,14 +42,17 @@ class TextureArrayExample(CameraWindow):
         self.ctx.enable_only(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
         
         time = self.wnd.frames
+
         print(time)
 
         modelview = Matrix44.identity(dtype='f4')
         #(abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time))), dtype='f4'
-        num = abs(1/16 * math.sin(64 * time))
+        num = abs(4 * math.sin(1/164 * time))
         num1 = abs(1/16 * math.sin(64 * time) * math.sin(64 * math.sin(64 * time) * time))
-        rotation = Matrix44.from_eulers((0, 0, 0), dtype = 'f4') #TODO what is euler angles, Ima have a fun time learning that shit
-        translation = Matrix44.from_translation((0.0, -30.0, -4.0), dtype='f4')
+        num2 = 4 * math.sin(time / 10)
+
+        rotation = Matrix44.from_eulers((num2, num2, num2), dtype = 'f4') #TODO what is euler angles, Ima have a fun time learning that shit
+        translation = Matrix44.from_translation((num2, num2, num2), dtype='f4')
         modelview = translation * rotation
         
         #print(modelview)
