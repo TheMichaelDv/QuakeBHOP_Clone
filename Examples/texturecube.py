@@ -24,7 +24,7 @@ class TextureArrayExample(CameraWindow):
         self.wnd.mouse_exclusivity = True
         self.num_layers = 1
 
-        self.cube = geometry.sphere(radius = 10)
+        self.cube = geometry.sphere(radius = 2)
         self.sphere = geometry.sphere(radius = 2)
 
         self.texture = self.load_texture_array('67-674595_mike-from-monsters-inc-mike-wazowski.png', layers=self.num_layers, mipmap=True, anisotrpy=4.0)
@@ -50,9 +50,11 @@ class TextureArrayExample(CameraWindow):
         num = abs(4 * math.sin(1/164 * time))
         num1 = abs(1/16 * math.sin(64 * time) * math.sin(64 * math.sin(64 * time) * time))
         num2 = 4 * math.sin(time / 10)
+        numx = 8 * math.sin(time / 25)
+        numy = 16 * math.cos(time / 25)
 
         rotation = Matrix44.from_eulers((num2, num2, num2), dtype = 'f4') #TODO what is euler angles, Ima have a fun time learning that shit
-        translation = Matrix44.from_translation((num2, num2, num2), dtype='f4')
+        translation = Matrix44.from_translation((numx, numy, 0), dtype='f4')
         modelview = translation * rotation
         
         #print(modelview)
@@ -64,7 +66,7 @@ class TextureArrayExample(CameraWindow):
         num = abs(1/16 * math.sin(64 * time))
         num1 = abs(1/16 * math.sin(64 * time) * math.sin(64 * math.sin(64 * time) * time))
         rotation = Matrix44.from_eulers((num, num, num), dtype = 'f4')
-        translation = Matrix44.from_translation((0.0, 10.0, -4.0), dtype='f4')
+        translation = Matrix44.from_translation((0.0, 0.0, 0.0), dtype='f4')
         modelview = translation * rotation
         
         self.prog1['m_proj'].write(self.camera.projection.matrix)
