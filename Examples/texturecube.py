@@ -39,6 +39,7 @@ class TextureArrayExample(CameraWindow):
         self.ctx.enable_only(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
         
         time = self.wnd.frames
+        print(time)
 
         modelview = Matrix44.identity(dtype='f4')
         #(abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time))), dtype='f4'
@@ -71,14 +72,16 @@ class TextureArrayExample(CameraWindow):
          
         #print(time)
         p = self.camera.position
+        
+        """
         if time % 3 == 0:
             y = -0.98 * 0.5 * math.pow((time/3*0.05),2)
             self.camera.set_position(p.x,p.y+y,p.z)
+        """
 
         #print(p.y)
         # sf = s0 + vot + 1/2at^2
         # vf = v0 + at
-        """
         t = time
         g = -9.8 / 100
         v0 = 4
@@ -86,21 +89,19 @@ class TextureArrayExample(CameraWindow):
         s0 = 0
         sf = s0 + v0 * t + 1/2 * g * math.pow(t, 2)
         if t % 1 == 0 and v > -4:
-            print(sf)
-            print(v)
-            print(" ")
-            self.camera.set_position(p.x,-sf / 5,p.z)
+            #print(sf)
+            #print(v)
+            #print(" ")
+            self.camera.set_position(p.x,sf / 5,p.z)
+        """
         if time % 1 == 0:
             sf = 2 * math.sin(time / 10)
             self.camera.set_position(p.x,p.y -sf / 5,p.z)
-        else: 
-            t -= time
-            v = v0 + g * t
-            print(time)
-            print(t)
-            print(v)
-            print(" ")
         """
 
 if __name__ == '__main__':
+    for i in range(4):
+        print("Line")
     moderngl_window.run_window_config(TextureArrayExample)
+    for i in range(4):
+        print("Line")
