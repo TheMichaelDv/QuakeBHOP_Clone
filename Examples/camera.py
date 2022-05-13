@@ -103,7 +103,7 @@ class cubes():
         for cube in self.cubes:
             if cube.name == name:
                 cube.release(True)
-    def addprog(self, shaders, name):
+    def rendprog(self, shaders, name):
         rend = None
         for shade in shaders:
             if shade.name == name:
@@ -111,7 +111,32 @@ class cubes():
         for cube in self.cubes:
             if cube.name == name and rend != None:
                 cube.render(rend)
-class shader():
+
+class spheres():
+    def __init__(self):
+        self.cubes = []
+    def __init__(self, sphere: VAO):
+        self.spheres = [sphere]
+    def addsphere(self, sphere: VAO):
+        self.spheres.append(sphere)
+    def findspheres(self, name):
+        for sphere in self.spheres:
+            if sphere.name == name:
+                return sphere
+        return None
+    def removesphere(self, name):
+        for sphere in self.spheres:
+            if sphere.name == name:
+                spheres.release(True)
+    def rendprog(self, shaders, name):
+        rend = None
+        for shade in shaders:
+            if shade.name == name:
+                rend = shade
+        for sphere in self.spheres:
+            if sphere.name == name and rend != None:
+                sphere.render(rend)
+class simpleshader():
     '''
     removes the need to spam the
     self.prog1['m_proj'].write(self.camera.projection.matrix)
@@ -122,47 +147,41 @@ class shader():
     also simplifies the code
     '''
     name = None
-    rotation = Matrix44.identity()
-    translation = Matrix44.identity()
+    fields = []
     def __init__(self):
-        self.shader = None
-    def __init__(self, shader: Program, name):
-        self.shader = shader
+        self._shader = None
+    def __init__(self, prog: Program, name = None):
+        self._shader = prog
         self.name = name
     @property
     def shader(self):
-        return self.shader
+        return self._shader
     @property
     def name(self):
-        return self.name
-    @property
-    def translation(self):
-        return self.translation
-    @property
-    def rotation(self):
-        return self.rotation
+        return self._name
     @shader.setter
-    def shader(self, shader: Program):
-        self.shader = shader
+    def shader(self, prog: Program):
+        self._shader = prog
     @shader.deleter
-    def shader(self):
-        self.shader.release()
+    def shader(self, c = None):
+        self._shader.release()
     @name.setter
     def name(self, name):
-        self.name = name
-    @translation.setter
+        self._name = name
     def translation(self, matrix):
-        self.translation = matrix
-    @rotation.setter
+        return Matrix44.from_translation(matrix, dtype='f4')
     def rotation(self, matrix):
-        self.rotation = matrix
-    def write(self, data, field):
-        self.shader[field].write(data)
-    def run(self, camera, matrix):
-        model = self.translation * self.rotation
-        self.shader['m_proj'].write(camera)
-        self.shader['m_model'].write(model)
-        self.shader['m_camera'].write(matrix)
+        return Matrix44.from_eulers(matrix, dtype = 'f4')
+    def fieldadd(self, fields):
+        self.fields = fields
+    def write(self, data):
+        for f in self.fields:
+            if f != 'm_proj' or f != 'm_model' or f != 'm_camera':
+                self.shader[f].write(data)
+    def run(self, proj, camera, tran = (0,0,0), rot = (0,0,0)):
+        self.shader['m_proj'].write(proj)
+        self.shader['m_model'].write(self.translation(tran) * self.rotation(rot))
+        self.shader['m_camera'].write(camera)
 
 class shaders():
     def __init__(self) -> None:

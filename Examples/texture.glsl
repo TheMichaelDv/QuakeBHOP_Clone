@@ -22,17 +22,14 @@ out vec4 fragColor;
 in vec2 uv;
 
 uniform sampler2DArray texture0;
-uniform float num_layers;
-uniform float time;
 
 void main() {
     // Get the current and next texture layer
-    float layer = floor(time);
-    vec4 c1 = texture(texture0, vec3(uv, mod(layer, num_layers)));
-    vec4 c2 = texture(texture0, vec3(uv, mod(layer + 1.0, num_layers)));
+    vec4 c1 = texture(texture0, vec3(uv, 1));
+    vec4 c2 = texture(texture0, vec3(uv, 1));
 
     // Interpolate between the two texture layers
-    float t = mod(time, 1.0);
+    float t = mod(100, 1.0);
     fragColor = (c1 * (1.0 - t) + c2 * t) + vec4(0.25);
 }
 #endif
