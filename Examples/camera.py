@@ -143,10 +143,11 @@ class simpleshader():
     self.prog1['m_model'].write(modelview)
     self.prog1['m_camera'].write(self.camera.matrix)
     and other repetitive shit
-
     also simplifies the code
     '''
     name = None
+    _rotation = (0,0,0)
+    _translation = (0,0,0)
     fields = []
     def __init__(self):
         self._shader = None
@@ -168,19 +169,31 @@ class simpleshader():
     @name.setter
     def name(self, name):
         self._name = name
-    def translation(self, matrix):
-        return Matrix44.from_translation(matrix, dtype='f4')
+    @property
+    def translation(self):
+        return self._translation
+    @translation.setter
+    def translation(self,matrix):
+        self._translation = matrix
+    @property
+    def rotation(self):
+        return self._rotation
+    @rotation.setter
     def rotation(self, matrix):
-        return Matrix44.from_eulers(matrix, dtype = 'f4')
+        self._rotation = matrix
     def fieldadd(self, fields):
         self.fields = fields
     def write(self, data):
         for f in self.fields:
             if f != 'm_proj' or f != 'm_model' or f != 'm_camera':
                 self.shader[f].write(data)
-    def run(self, proj, camera, tran = (0,0,0), rot = (0,0,0)):
+    def run(self, proj, camera, tran = None, rot = None):
+        if tran:
+            self._translation = tran
+        if rot:
+            self._rotation = rot
         self.shader['m_proj'].write(proj)
-        self.shader['m_model'].write(self.translation(tran) * self.rotation(rot))
+        self.shader['m_model'].write(Matrix44.from_translation(self.translation, dtype='f4') * Matrix44.from_eulers(self.rotation, dtype='f4'))
         self.shader['m_camera'].write(camera)
 
 class shaders():

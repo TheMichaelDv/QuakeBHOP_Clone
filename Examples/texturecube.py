@@ -27,24 +27,20 @@ class Ihavenoidea(CameraWindow):
         self.prog1 = simpleshader(self.load_program('texture.glsl'), name='side')
         self.prog.shader['texture0'] = 0
         self.prog1.shader['texture0'] = 0
-        self.prog.fieldadd(['m_proj', 'm_model','m_camera'])
-        self.prog1.fieldadd(['m_proj', 'm_model','m_camera'])
+        self.prog1.translation = (5,-5,5)
 
     def render(self, time: float, frametime: float):
         self.ctx.enable_only(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
         
         time = self.wnd.frames
+        t = self.prog1.translation
 
-        #(abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time)), abs(1/16 * math.sin(64 * time))), dtype='f4'
-        #num = abs(4 * math.sin(1/164 * time))
-        #num1 = abs(1/16 * math.sin(64 * time) * math.sin(64 * math.sin(64 * time) * time))
-        num2 = 4 * math.sin(time / 10)
-        numx = 8 * math.sin(time / 25)
-        numy = 16 * math.cos(time / 25)
-
-        self.prog.run(self.camera.projection.matrix, self.camera.matrix, tran = (numx, numy, 0), rot = (num2, num2, num2)) #TODO what is euler angles, Ima have a fun time learning that shit
-        num = abs(1/16 * math.sin(64 * time))
-        self.prog.run(self.camera.projection.matrix, self.camera.matrix, tran = (num, num, num), rot = (0, 0, 0))
+        self.prog.run(self.camera.projection.matrix, self.camera.matrix, tran = (0, 7, 0), rot = (0, 0, 0)) #TODO what is euler angles, Ima have a fun time learning that shit
+        #this is why we abstract or else this would be 10 lines instead of 4 
+        if t[1] >=  -5 and t[1] <= 5 and time % 10 == 0:
+            self.prog1.run(self.camera.projection.matrix, self.camera.matrix, tran = (5, t[1]+0.5, 5), rot = (0, 0, 0))
+        else:
+            self.prog1.run(self.camera.projection.matrix, self.camera.matrix)
         
         self.texture.use(location=0)
         self.cube.findspheres('center').render(self.prog.shader)
