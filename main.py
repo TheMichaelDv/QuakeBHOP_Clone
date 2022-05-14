@@ -9,7 +9,7 @@ However I need to implement the running of the render function differently than 
 I cannot modify the module itself as it will not update on your machine.
 Its copy and pasted from moderngl_window.__init__.run_window_config()
 
-Also cleaned up directories and files, wanted to do that forever
+Also cleaned up directories and files, wanted to do that forever. Brached old so if you wanted 
 
 FYI texturecube.py cannot be ran anymore run this file instead to execute texturecube.py
 '''
