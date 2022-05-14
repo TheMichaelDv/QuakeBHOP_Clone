@@ -43,8 +43,28 @@ class CameraWindow(mglw.WindowConfig):
                 self.camera.move_backward(True)
             if action == self.keys.ACTION_RELEASE:
                 self.camera.move_backward(False)
-        #jump
-        elif key == keys.J: 
+        elif key == keys.F:
+            self.camera_enabled = not self.camera_enabled
+            self.wnd.mouse_exclusivity = self.camera_enabled
+            self.wnd.cursor = not self.camera_enabled
+        elif key == keys.SPACE:
+            if action == self.keys.ACTION_PRESS:
+                self.camera.move_up(True)
+            if action == self.keys.ACTION_RELEASE:
+                self.camera.move_up(False)
+        elif key == keys.Z:
+            if action == self.keys.ACTION_PRESS:
+                self.camera.move_down(True)
+            if action == self.keys.ACTION_RELEASE:
+                self.camera.move_down(False)
+
+    def mouse_position_event(self, x: int, y: int, dx, dy):
+        if self.camera_enabled:
+            self.camera.rot_state(-dx, -dy)
+
+    def resize(self, width: int, height: int):
+        self.camera.projection.update(aspect_ratio=self.wnd.aspect_ratio)
+''' elif key == keys.J: 
             if action == self.keys.ACTION_PRESS:
                 print("J")
                 p = self.camera.position
@@ -62,44 +82,20 @@ class CameraWindow(mglw.WindowConfig):
                         self.camera.set_position(p.x,-sf / 5,p.z)
                         t += 1/10
                     else: 
-                        c = False
-        elif key == keys.F:
-            self.camera_enabled = not self.camera_enabled
-            self.wnd.mouse_exclusivity = self.camera_enabled
-            self.wnd.cursor = not self.camera_enabled
-        elif key == keys.SPACE:
-            print("Space")
-            if action == self.keys.ACTION_PRESS:
-                self.camera.move_up(True)
-            if action == self.keys.ACTION_RELEASE:
-                self.camera.move_up(False)
-        elif key == keys.Z:
-            if action == self.keys.ACTION_PRESS:
-                self.camera.move_down(True)
-            if action == self.keys.ACTION_RELEASE:
-                self.camera.move_down(False)
-
-
-    def mouse_position_event(self, x: int, y: int, dx, dy):
-        if self.camera_enabled:
-            self.camera.rot_state(-dx, -dy)
-
-    def resize(self, width: int, height: int):
-        self.camera.projection.update(aspect_ratio=self.wnd.aspect_ratio)
-
+                        c = False'''
 class cubes():
     def __init__(self):
         self.cubes = []
     def __init__(self, cube: VAO):
         self.cubes = [cube]
-    def addcube(self, cube: VAO):
+    def add(self, cube: VAO):
         self.cube.append(cube)
-    def findcube(self, name):
+    def find(self, name):
         for cube in self.cubes:
             if cube.name == name:
                 return cube
         return None
-    def removecube(self, name):
+    def remove(self, name):
         for cube in self.cubes:
             if cube.name == name:
                 cube.release(True)
@@ -117,14 +113,14 @@ class spheres():
         self.cubes = []
     def __init__(self, sphere: VAO):
         self.spheres = [sphere]
-    def addsphere(self, sphere: VAO):
+    def add(self, sphere: VAO):
         self.spheres.append(sphere)
-    def findspheres(self, name):
+    def find(self, name):
         for sphere in self.spheres:
             if sphere.name == name:
                 return sphere
         return None
-    def removesphere(self, name):
+    def remove(self, name):
         for sphere in self.spheres:
             if sphere.name == name:
                 spheres.release(True)

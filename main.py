@@ -1,87 +1,101 @@
 '''
-From Jason Li @2021
+Finally Main game loop XDDD
 
-Dummy Code lmao
+Basically the tick loop HAS to be separate from frametime so game logic can be run on a diff schedule than frametime
+because this allows for unlimited frames and I can set things on a linear time scale. In addition, if a player lags, the game will still be logical.
+http://gameprogrammingpatterns.com/game-loop.html for further reading
 
-Real code incoming
+However I need to implement the running of the render function differently than what the module initally offers. 
+I cannot modify the module itself as it will not update on your machine.
+Its copy and pasted from moderngl_window.__init__.run_window_config()
+
+Also cleaned up directories and files, wanted to do that forever
+
+FYI texturecube.py cannot be ran anymore run this file instead to execute texturecube.py
 '''
-import numpy as np
-from matplotlib import animation
-from matplotlib import pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
-fig = plt.figure()
-ax = fig.add_subplot(projection='3d')
+from moderngl_window import *
+from moderngl_window.context.base import WindowConfig, BaseWindow
+from moderngl_window.timers.clock import Timer
+from moderngl_window.conf import settings
+from moderngl_window.utils.module_loading import import_string
+from Resources.texturecube import Game
 
-#Points to draw lines to/Scatterpoints
-p = []
-for point in range(int(input("How many points? In x y z format: "))):
-	p.append([int(x) for x in input("Point? ").split(" ")])
-#p = np.array([[-3,4,7],[2,2,2]])
-p = np.array([[10,0,0],[0,10,0],[0,0,10],[-10,0,0],[0,-10,0],[0,0,-10],[10,10,10],[-10,-10,-10],[-10,10,10],[-10,-10,10],[-10,10,-10],[10,-10,-10],[10,10,-10],[10,-10,10]])
-p = np.array(p)
 
-#Generates "Frames"
-def gen(n, xyz):
-    xyzt = []
-    x1 = 0
-    y1 = 0
-    z1 = 0
-    if sum(xyz) == 0:
-        return np.array([[0,0,0]])
-    while abs(x1) <= abs(xyz[0]) and abs(y1) <= abs(xyz[1]) and abs(z1) <= abs(xyz[2]):
-        xyzt.append([x1,y1,z1])
-        x1 += xyz[0]/n
-        y1 += xyz[1]/n
-        z1 += xyz[2]/n
-    return np.array(xyzt)
+def run(config_cls: WindowConfig, timer=None, args=None) -> None:
+    """
+    Run an WindowConfig entering a blocking main loop
 
-#This is called each frame
-def update(num, data, lines):
-    global F, sca
-    if num == 99 and F == 0:
-        F = 1
-        sca = ax.scatter(p[:,0],p[:,1],p[:,2],color = '#ff3399')
-    elif num == 99 and F == 1:
-        F = 0
-        sca.remove()
-    if F == 0:
-        for e in range(len(data)):
-            lines[e][0].set_data(data[e][:2, :num])
-            lines[e][0].set_3d_properties(data[e][2, :num])
-    else:
-        for e in range(len(data)):
-            lines[e][0].set_data(data[e][:2, num:])
-            lines[e][0].set_3d_properties(data[e][2, num:])
+    Args:
+        config_cls: The WindowConfig class to render
+    Keyword Args:
+        timer: A custom timer instance
+        args: Override sys.args
+    """
+    setup_basic_logging(config_cls.log_level)
+    parser = create_parser()
+    config_cls.add_arguments(parser)
+    values = parse_args(args=args, parser=parser)
+    config_cls.argv = values
+    window_cls = get_local_window_cls(values.window)
 
-#Number of Updates/Frames
-N = 100
-F = 0
+    # Calculate window size
+    size = values.size or config_cls.window_size
+    size = int(size[0] * values.size_mult), int(size[1] * values.size_mult)
 
-#Containers for the frames/data
-data = np.zeros(len(p), dtype = object)
-line = np.zeros(len(p), dtype = object)
-for d in range(len(p)):
-    data[d] = np.array(gen(N,p[d])).T
-    line[d] = ax.plot(data[d][0, 0:1], data[d][1, 0:1], data[d][2, 0:1], color = '#ff3399')
+    # Resolve cursor
+    show_cursor = values.cursor
+    if show_cursor is None:
+        show_cursor = config_cls.cursor
 
-#axis labels, currently set to off    
-ax.set_xlim3d([-10.0, 10.0])
-ax.set_xlabel('X')
+    window = window_cls(
+        title=config_cls.title,
+        size=size,
+        fullscreen=config_cls.fullscreen or values.fullscreen,
+        resizable=values.resizable
+        if values.resizable is not None
+        else config_cls.resizable,
+        gl_version=config_cls.gl_version,
+        aspect_ratio=config_cls.aspect_ratio,
+        vsync=values.vsync if values.vsync is not None else config_cls.vsync,
+        samples=values.samples if values.samples is not None else config_cls.samples,
+        cursor=show_cursor if show_cursor is not None else True,
+    )
+    window.print_context_info()
+    activate_context(window=window)
+    timer = timer or Timer()
+    window.config = config_cls(ctx=window.ctx, wnd=window, timer=timer)
 
-ax.set_ylim3d([-10.0, 10.0])
-ax.set_ylabel('Y')
+    # Swap buffers once before staring the main loop.
+    # This can trigged additional resize events reporting
+    # a more accurate buffer size
+    window.swap_buffers()
+    window.set_default_viewport()
 
-ax.set_zlim3d([-10.0, 10.0])
-ax.set_zlabel('Z')
+    timer.start()
 
-#ax.set_axis_off()
+    while not window.is_closing:
+        #GAME LOOP
+        current_time, delta = timer.next_frame()
 
-#inits the animation, and calls update() N times spaced out every Interval millisecond
-ani = animation.FuncAnimation(fig, update, N, fargs=(data, line), interval=N/50, repeat = True, blit=False)
+        if window.config.clear_color is not None:
+            window.clear(*window.config.clear_color)
 
-#Saving the animation as a gif
-#ani.save('matplot003.gif', writer='imagemagick')
+        # Always bind the window framebuffer before calling render
+        window.use()
+        window.render(current_time, delta)
+        if not window.is_closing:
+            window.swap_buffers()
 
-#Displays the graph
-plt.show()
+    _, duration = timer.stop()
+    window.destroy()
+    if duration > 0:
+        logger.info(
+            "Duration: {0:.2f}s @ {1:.2f} FPS".format(
+                duration, window.frames / duration
+            )
+        )
+
+
+if __name__ == "__main__":
+    run(Game)
