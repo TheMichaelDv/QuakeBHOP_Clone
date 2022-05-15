@@ -9,12 +9,7 @@ import moderngl
 import pygame
 import moderngl_window
 from moderngl_window import geometry
-
-import sys
-# for .insert, insert at 1, 0 is the script path (or '' in REPL)
-sys.path.append('/Programming/QuakeBhop/Resources')
-
-from camera import *
+from Resources.camera import *
 
 import math
 import time as a
