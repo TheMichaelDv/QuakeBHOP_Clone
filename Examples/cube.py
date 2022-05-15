@@ -8,7 +8,13 @@ import moderngl_window
 from moderngl_window import geometry
 
 #Camera.py above this file
-from camera import CameraWindow
+#from Resources.camera import *
+
+import sys
+# for .insert, insert at 1, 0 is the script path (or '' in REPL)
+sys.path.append('/Programming/QuakeBhop/Resources')
+
+from camera import *
 
 import math
 
