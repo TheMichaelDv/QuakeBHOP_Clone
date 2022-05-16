@@ -45,7 +45,8 @@ from moderngl_window.conf import settings
 from moderngl_window.utils.module_loading import import_string
 from Resources.texturecube import Game
 import time
-from ctypes import windll, wintypes
+from ctypes import windll
+from ctypes.wintypes import UINT
 
 
 def run(config_cls: WindowConfig, timer=None, args=None) -> None:
@@ -102,11 +103,13 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
     window.set_default_viewport()
 
     #Calcuating Frametimes in Nanoseconds
-    frametime = int(1/values.framerate * 1000000000) if values.vsync is False and values.framerate != 60 else (1/60)
+    frametime = int(1/values.framerate * 900000000) if values.vsync is False and values.framerate != 60 else (1/60)
 
     current_time = time.perf_counter_ns()
     delta = 10000000
-
+    kernel32 = windll.kernel32
+    
+    kernel32.timeBeginPeriod(UINT(1))
     timer.start()
     while not window.is_closing:
 
@@ -114,9 +117,9 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
         #need to set the timeBeginPeriod in timeapi.h to 1 ms, which is where ctypes come into play
         sleep = time.perf_counter_ns()
         while delta + (time.perf_counter_ns()-sleep) <= frametime:
-            pass
+            kernel32.Sleep(1)
+        print(delta + (time.perf_counter_ns()-sleep))
         delta = time.perf_counter_ns()
-
         t, d = timer.next_frame()
 
         if window.config.clear_color is not None:
@@ -138,6 +141,7 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
                 duration, window.frames / duration
             )
         )
+    kernel32.timeEndPeriod(UINT(1))
 
 
 if __name__ == "__main__":
