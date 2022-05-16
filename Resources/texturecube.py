@@ -29,12 +29,32 @@ class Game(CameraWindow):
         self.prog1 = simpleshader(self.load_program('Shaders/texture.glsl'), name='side')
         self.prog.shader['texture0'] = 0
         self.prog1.shader['texture0'] = 0
-        self.prog.translation = (0,0,6)
-        self.prog.translation = (5,5,5)
         self.tick = a.time()
+        """
+        time = self.tick
+
+        num = abs(4 * math.sin(1/164 * time))
+        num1 = abs(1/16 * math.sin(64 * time) * math.sin(64 * math.sin(64 * time) * time))
+        num2 = 4 * math.sin(time / 10)
+        numx = 8 * math.sin(time / 25)
+        numy = 16 * math.cos(time / 25)
+
+        rotation = Matrix44.from_eulers((num2, num2, num2), dtype = 'f4') #TODO what is euler angles, Ima have a fun time learning that shit
+        translation = Matrix44.from_translation((num2, num2, num2), dtype='f4')
+        translation = Matrix44.from_translation((numx, numy, 0), dtype='f4')
+        modelview = translation * rotation
+
+        self.prog1['m_proj'].write(self.camera.projection.matrix)
+        self.prog1['m_model'].write(modelview)
+        self.prog1['m_camera'].write(self.camera.matrix)
+        self.prog1['time'].value = time
+        """
+
     def render(self, time: float, frametime: float):
         self.ctx.enable_only(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
         
+        time = self.wnd.frames
+
         #print(frametime)
         t = self.prog1.translation
 
@@ -42,6 +62,18 @@ class Game(CameraWindow):
         if self.camera.matrix[3][2] >=5:
            position = self.camera.matrix[3]
            self.camera.set_position(position[0],position[1],5)
+
+        time = self.tick
+        num = abs(4 * math.sin(1/164 * time))
+        num1 = abs(1/16 * math.sin(64 * time) * math.sin(64 * math.sin(64 * time) * time))
+        num2 = 4 * math.sin(time / 10)
+        numx = 8 * math.sin(time / 25)
+        numy = 16 * math.cos(time / 25)
+        rotation = Matrix44.from_eulers((num2, num2, num2), dtype = 'f4')
+        translation = Matrix44.from_translation((num2, num2, num2), dtype='f4')
+        modelview = translation * rotation
+        self.prog['m_model'].write(modelview)
+        self.prog1['m_model'].write(modelview)
         '''
 
         self.prog.run(self.camera.projection.matrix, self.camera.matrix) #TODO what is euler angles, Ima have a fun time learning that shit
