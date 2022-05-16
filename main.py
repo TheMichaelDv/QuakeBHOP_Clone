@@ -35,6 +35,7 @@ Also if the physics engine takes too long to process, the client will not see it
 For now however, I uncapped the framerates, so we are not vsync limited.
 I will be giving the game 144 fps and leaving the rest to the logic engine.
 
+
 A major problem I'm having is timing. If the game goes as fast as possible, then how to get the computer to sleep for about 10-15 milliseconds or less? time.sleep() is NOT accurate
 '''
 from moderngl_window import *
@@ -44,6 +45,7 @@ from moderngl_window.conf import settings
 from moderngl_window.utils.module_loading import import_string
 from Resources.texturecube import Game
 import time
+from ctypes import windll, wintypes
 
 
 def run(config_cls: WindowConfig, timer=None, args=None) -> None:
@@ -104,20 +106,25 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
 
     current_time = time.perf_counter_ns()
     delta = 10000000
+
+    timer.start()
     while not window.is_closing:
 
-        #busy wait function in order to not exceed the frametime
+        #busy wait function in order to not exceed the frametime, but pegs cpu at 100% looking into solutions, time.sleep is inaccurate up to 2-4ms too inaccurate.
+        #need to set the timeBeginPeriod in timeapi.h to 1 ms, which is where ctypes come into play
         sleep = time.perf_counter_ns()
         while delta + (time.perf_counter_ns()-sleep) <= frametime:
             pass
         delta = time.perf_counter_ns()
+
+        t, d = timer.next_frame()
 
         if window.config.clear_color is not None:
             window.clear(*window.config.clear_color)
 
         # Always bind the window framebuffer before calling render
         window.use()
-        window.render(current_time, delta)
+        window.render(t, d)
         if not window.is_closing:
             window.swap_buffers()
         delta = time.perf_counter_ns()-delta
@@ -134,4 +141,4 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
 
 
 if __name__ == "__main__":
-    run(Game, args=('-vs','False','--window','glfw','-fps','100'))
+    run(Game, args=('-vs','False','--window','pyglet','-fps','100'))
