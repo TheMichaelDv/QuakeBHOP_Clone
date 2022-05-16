@@ -39,14 +39,14 @@ class Game(CameraWindow):
         t = self.prog1.translation
 
         '''
-                if self.camera.matrix[3][2] >=5:
-            position = self.camera.matrix[3]
-            self.camera.set_position(position[0],position[1],5)
+        if self.camera.matrix[3][2] >=5:
+           position = self.camera.matrix[3]
+           self.camera.set_position(position[0],position[1],5)
         '''
 
         self.prog.run(self.camera.projection.matrix, self.camera.matrix) #TODO what is euler angles, Ima have a fun time learning that shit
         #this is why we abstract or else this would be 10 lines instead of 4 
-        if t[1] >=  -5 and t[1] <= 5 and time % 10 == 0:
+        if t[1] >=  -5 and t[1] <= 5:
             self.prog1.run(self.camera.projection.matrix, self.camera.matrix, tran = (5, t[1]+0.5, 5), rot = (0, 0, 0))
             #self.camera.set_position(1,1,1)
             #print(self.camera.projection.matrix)
@@ -56,8 +56,8 @@ class Game(CameraWindow):
         self.texture.use(location=0)
         self.cube.find('center').render(self.prog.shader)
         self.sphere.find('side').render(self.prog1.shader)
-         
-        """
+        
+    """
         if time % 3 == 0:
             y = -0.98 * 0.5 * math.pow((time/3*0.05),2)
             self.camera.set_position(p.x,p.y+y,p.z)
