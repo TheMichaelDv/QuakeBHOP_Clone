@@ -103,8 +103,9 @@ class cubes():
         except:
             return None
     def rendprog(self, shaders, name):
+        shaders[0].run(shaders[1],shaders[2])
         try:
-            self.cubes[name].render(shaders)
+            self.cubes[name].render(shaders[0].shader)
         except:
             raise TypeError
 
@@ -128,8 +129,9 @@ class spheres():
         except:
             return None
     def rendprog(self, shaders, name):
+        shaders[0].run(shaders[1],shaders[2])
         try:
-            self.spheres[name].render(shaders)
+            self.spheres[name].render(shaders[0].shader)
         except:
             raise TypeError
 class simpleshader():
@@ -142,8 +144,8 @@ class simpleshader():
     also simplifies the code
     '''
     name = None
-    _rotation = (0,0,0)
-    _translation = (0,0,0)
+    _rotation = [0,0,0]
+    _translation = [0,0,0]
     fields = []
     def __init__(self):
         self._shader = None
@@ -171,12 +173,16 @@ class simpleshader():
     @translation.setter
     def translation(self,matrix):
         self._translation = matrix
+    def move(self,mod):
+        self.translation = [self.translation[0]+mod[0],self.translation[1]-mod[1],self.translation[2]-mod[2]]
     @property
     def rotation(self):
         return self._rotation
     @rotation.setter
     def rotation(self, matrix):
         self._rotation = matrix
+    def moverot(self,mod):
+        self._rotation = [self._rotation[0]+mod[0],self._rotation[1]-mod[1],self._rotation[2]-mod[2]]
     def fieldadd(self, fields):
         self.fields = fields
     def write(self, data):

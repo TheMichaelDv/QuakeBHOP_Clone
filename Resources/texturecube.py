@@ -29,8 +29,22 @@ class Game(CameraWindow):
         self.prog1 = simpleshader(self.load_program('Shaders/texture.glsl'), name='side')
         self.prog.shader['texture0'] = 0
         self.prog1.shader['texture0'] = 0
-        self.tick = a.time()
-        """
+
+    def render(self, time: int, frametime: float):
+        self.ctx.enable_only(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
+        
+        if time % 5 == 0:
+            self.physics(time)
+        #TLDR: Euler Angles rotate the cube x radians in each axis,    
+        #this is why we abstract or else this would be 10 lines instead of 4 
+        self.texture.use(location=0)
+        self.cube.rendprog([self.prog,self.camera.projection.matrix, self.camera.matrix],'center')
+        self.sphere.rendprog([self.prog1,self.camera.projection.matrix, self.camera.matrix],'side')
+        
+    def physics(self, time: int): #time in seconds
+        self.prog1.move([0,0.001,0])
+        self.prog1.moverot([3.14/100,0,0])
+'''
         time = self.tick
 
         num = abs(4 * math.sin(1/164 * time))
@@ -48,17 +62,10 @@ class Game(CameraWindow):
         self.prog1['m_model'].write(modelview)
         self.prog1['m_camera'].write(self.camera.matrix)
         self.prog1['time'].value = time
-        """
+        if time % 3 == 0:
+            y = -0.98 * 0.5 * math.pow((time/3*0.05),2)
+            self.camera.set_position(p.x,p.y+y,p.z)
 
-    def render(self, time: float, frametime: float):
-        self.ctx.enable_only(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
-        
-        time = self.wnd.frames
-
-        #print(frametime)
-        t = self.prog1.translation
-
-        '''
         if self.camera.matrix[3][2] >=5:
            position = self.camera.matrix[3]
            self.camera.set_position(position[0],position[1],5)
@@ -74,25 +81,6 @@ class Game(CameraWindow):
         modelview = translation * rotation
         self.prog['m_model'].write(modelview)
         self.prog1['m_model'].write(modelview)
-        '''
-
-        self.prog.run(self.camera.projection.matrix, self.camera.matrix) #TLDR: Euler Angles rotate the cube x radians in each axis,    
-        #this is why we abstract or else this would be 10 lines instead of 4 
-        if t[1] >=  -5 and t[1] <= 5:
-            self.prog1.run(self.camera.projection.matrix, self.camera.matrix, tran = (0,0,0), rot = (0,0,0))
-            #self.camera.set_position(1,1,1)
-            #print(self.camera.projection.matrix)
-        else:
-            self.prog1.run(self.camera.projection.matrix, self.camera.matrix, rot= (0,0,0))
-
-        self.texture.use(location=0)
-        self.cube.find('center').render(self.prog.shader)
-        self.sphere.find('side').render(self.prog1.shader)
-        
-    """
-        if time % 3 == 0:
-            y = -0.98 * 0.5 * math.pow((time/3*0.05),2)
-            self.camera.set_position(p.x,p.y+y,p.z)
 
         #print(p.y)
         # sf = s0 + vot + 1/2at^2
@@ -110,7 +98,5 @@ class Game(CameraWindow):
             self.camera.set_position(p.x,sf/5,p.z)
         if time % 1 == 0:
             sf = 2 * math.sin(time / 10)
-            self.camera.set_position(p.x,p.y -sf / 5,p.z)
-        """
-    def physics(self, time: float): #time in seconds
-        pass
+            self.camera.set_position(p.x,p.y -sf / 5,p.z
+'''

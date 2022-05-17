@@ -108,8 +108,8 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
 
     current_time = time.perf_counter_ns()
     delta = 100000000
-    tick = 20000000
-
+    tick = 0
+    
     kernel32 = windll.kernel32
     kernel32.timeBeginPeriod(UINT(1))
 
@@ -122,7 +122,7 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
         while delta + (time.perf_counter_ns()-sleep) <= frametime:
             #sleep for 1 ms
             kernel32.Sleep(1)
-
+        tick += 1
         delta = time.perf_counter_ns()
 
         if window.config.clear_color is not None:
@@ -130,7 +130,7 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
 
         # Always bind the window framebuffer before calling render
         window.use()
-        window.render(current_time, delta)
+        window.render(tick, delta)
         if not window.is_closing:
             window.swap_buffers()
         delta = time.perf_counter_ns()-delta
