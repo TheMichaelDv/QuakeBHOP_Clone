@@ -87,51 +87,51 @@ class cubes():
     def __init__(self):
         self.cubes = []
     def __init__(self, cube: VAO):
-        self.cubes = [cube]
+        self.cubes = {
+            cube.name: cube, #cube, trans, rot
+        }
     def add(self, cube: VAO):
-        self.cube.append(cube)
+        self.cubes[cube.name] = cube
     def find(self, name):
-        for cube in self.cubes:
-            if cube.name == name:
-                return cube
-        return None
+        try:
+            return self.cubes[name]
+        except:
+            return None
     def remove(self, name):
-        for cube in self.cubes:
-            if cube.name == name:
-                cube.release(True)
+        try:
+            self.cubes[name].release()
+        except:
+            return None
     def rendprog(self, shaders, name):
-        rend = None
-        for shade in shaders:
-            if shade.name == name:
-                rend = shade
-        for cube in self.cubes:
-            if cube.name == name and rend != None:
-                cube.render(rend)
+        try:
+            self.cubes[name].render(shaders)
+        except:
+            raise TypeError
 
 class spheres():
     def __init__(self):
-        self.cubes = []
+        self.spheres = []
     def __init__(self, sphere: VAO):
-        self.spheres = [sphere]
+        self.spheres = {
+            sphere.name: sphere, #sphere, trans, rot
+        }
     def add(self, sphere: VAO):
-        self.spheres.append(sphere)
+        self.spheres[sphere.name] = sphere
     def find(self, name):
-        for sphere in self.spheres:
-            if sphere.name == name:
-                return sphere
-        return None
+        try:
+            return self.spheres[name]
+        except:
+            return None
     def remove(self, name):
-        for sphere in self.spheres:
-            if sphere.name == name:
-                spheres.release(True)
+        try:
+            self.spheres[name].release()
+        except:
+            return None
     def rendprog(self, shaders, name):
-        rend = None
-        for shade in shaders:
-            if shade.name == name:
-                rend = shade
-        for sphere in self.spheres:
-            if sphere.name == name and rend != None:
-                sphere.render(rend)
+        try:
+            self.spheres[name].render(shaders)
+        except:
+            raise TypeError
 class simpleshader():
     '''
     removes the need to spam the
@@ -191,7 +191,6 @@ class simpleshader():
         self.shader['m_proj'].write(proj)
         self.shader['m_model'].write(Matrix44.from_translation(self.translation, dtype='f4') * Matrix44.from_eulers(self.rotation, dtype='f4'))
         self.shader['m_camera'].write(camera)
-
 class shaders():
     def __init__(self) -> None:
         self.shaders = []

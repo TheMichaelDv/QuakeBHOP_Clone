@@ -22,7 +22,7 @@ class Game(CameraWindow):
         self.wnd.mouse_exclusivity = True
 
         self.cube = cubes(geometry.cube(name='center'))
-        self.sphere = spheres(geometry.sphere(radius = 2, name='side'))
+        self.sphere = cubes(geometry.cube(size=(2,2,2), name='side'))
 
         self.texture = self.load_texture_array('Images/help.png', layers=1, mipmap=True, anisotrpy=4.0)
         self.prog = simpleshader(self.load_program('Shaders/texture.glsl'), name='center')
@@ -44,14 +44,14 @@ class Game(CameraWindow):
            self.camera.set_position(position[0],position[1],5)
         '''
 
-        self.prog.run(self.camera.projection.matrix, self.camera.matrix) #TODO what is euler angles, Ima have a fun time learning that shit
+        self.prog.run(self.camera.projection.matrix, self.camera.matrix) #TLDR: Euler Angles rotate the cube x radians in each axis,    
         #this is why we abstract or else this would be 10 lines instead of 4 
         if t[1] >=  -5 and t[1] <= 5:
-            self.prog1.run(self.camera.projection.matrix, self.camera.matrix, tran = (5, t[1]+0.5, 5), rot = (0, 0, 0))
+            self.prog1.run(self.camera.projection.matrix, self.camera.matrix, tran = (0,0,0), rot = (0,0,0))
             #self.camera.set_position(1,1,1)
             #print(self.camera.projection.matrix)
         else:
-            self.prog1.run(self.camera.projection.matrix, self.camera.matrix)
+            self.prog1.run(self.camera.projection.matrix, self.camera.matrix, rot= (0,0,0))
 
         self.texture.use(location=0)
         self.cube.find('center').render(self.prog.shader)
@@ -80,3 +80,5 @@ class Game(CameraWindow):
             sf = 2 * math.sin(time / 10)
             self.camera.set_position(p.x,p.y -sf / 5,p.z)
         """
+    def physics(self, time: float): #time in seconds
+        pass
