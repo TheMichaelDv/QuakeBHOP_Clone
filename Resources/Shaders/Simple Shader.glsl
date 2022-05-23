@@ -27,8 +27,8 @@ void main() {
     normal = m_normal * normalize(in_normal);
     pos = vec3(1,1,1);
     */
-    pos = vec3(m_model * vec4(in_position, 1.0));
-    normal = mat3(transpose(inverse(m_camera * m_model))) * in_normal;  
+    pos = vec3(m_model * vec4(in_position, 5.0));
+    normal = in_normal;  
     
     gl_Position = m_proj * m_camera * vec4(pos, 1.0);
 }
@@ -47,6 +47,6 @@ void main() {
     vec3 ambient = ambientStrength * vec3(1,1,1);
 
     vec3 result = ambient * vec3(1,1,1);
-    fragColor = vec4(result,1) * vec4(1,1,0.5,0.5);// * color This determines final color. Usually we define a uniform so we can modify it in python
+    fragColor = vec4(1,1,0.5,0.5);// * color This determines final color. Usually we define a uniform so we can modify it in python
 }
 #endif

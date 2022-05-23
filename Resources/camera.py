@@ -3,7 +3,7 @@ import moderngl_window as mglw
 from pyrr import Matrix44
 from moderngl.program import Program
 from moderngl_window.scene.camera import KeyboardCamera, OrbitCamera
-from moderngl_window.context.base import BaseKeys
+from moderngl_window.context.glfw import Keys
 from moderngl_window.opengl.vao import VAO
 
 import math
@@ -15,7 +15,7 @@ class CameraWindow(mglw.WindowConfig):
         super().__init__(**kwargs)
         self.camera = KeyboardCamera(self.wnd.keys, aspect_ratio=self.wnd.aspect_ratio)
         self.camera_enabled = True
-        self.keys = BaseKeys()
+        self.keys = Keys()
 
     def key_event(self, key, action, modifiers):
         keys = self.wnd.keys

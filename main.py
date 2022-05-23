@@ -37,13 +37,10 @@ I will be giving the game 144 fps and leaving the rest to the logic engine.
 
 SOLVED: A major problem I'm having is timing. If the game goes as fast as possible, then how to get the computer to sleep for about 10-15 milliseconds or less? time.sleep() is NOT accurate
 5/17
-Need to have two sleep functions, one to test if a conditon is met, 0.02s and one to test if 0.007s is met
+Need to have two sleep functions, one to test if a conditon is met, 0.02s and one to test if 0.007s is met || gonna step around this issue by implmenting multi
 '''
 from moderngl_window import *
-from moderngl_window.context.base import WindowConfig, BaseWindow
-from moderngl_window.timers.clock import Timer
-from moderngl_window.conf import settings
-from moderngl_window.utils.module_loading import import_string
+import moderngl_window
 from Resources.texturecube import Game
 import time
 from ctypes import windll
@@ -66,6 +63,12 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
     config_cls.add_arguments(parser)
     values = parse_args(args=args, parser=parser)
     config_cls.argv = values
+    '''
+    if values.window == "glfw":
+        window_cls = glfw.Window
+    else
+        window_cls = get_local_window_cls(values.window)
+    '''
     window_cls = get_local_window_cls(values.window)
 
     # Calculate window size
@@ -104,12 +107,12 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
     window.set_default_viewport()
 
     #Calcuating Frametimes in Nanoseconds
-    frametime = int(1/values.framerate * 900000000) if values.vsync is False and values.framerate != 60 else (1/60)
+    frametime = int(1/values.framerate * 900000000) if values.vsync is False and values.framerate != 60 else int((1/60))
 
     current_time = time.perf_counter_ns()
-    delta = 100000000
+    delta = 0
     tick = 0
-    
+
     kernel32 = windll.kernel32
     kernel32.timeBeginPeriod(UINT(1))
 
@@ -127,14 +130,16 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
 
         if window.config.clear_color is not None:
             window.clear(*window.config.clear_color)
-
-        # Always bind the window framebuffer before calling render
+           # Always bind the window framebuffer before calling render
         window.use()
         window.render(tick, delta)
+
+        if tick % 5 == 0:
+            window.config.physics(tick)
+
         if not window.is_closing:
             window.swap_buffers()
         delta = time.perf_counter_ns()-delta
-        
         
     duration = (time.perf_counter_ns()-current_time)/1000000000
     window.destroy()
@@ -147,5 +152,6 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
     kernel32.timeEndPeriod(UINT(1))
 
 
+
 if __name__ == "__main__":
-    run(Game, args=('-vs','False','--window','pyglet','-fps','100'))
+    run(Game, args=('-vs','False','--window','glfw','-fps','100'))
