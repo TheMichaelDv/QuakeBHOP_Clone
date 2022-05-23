@@ -38,9 +38,9 @@ class Game(CameraWindow):
         self.texture.use(location=0)
         self.cube.rendprog([self.prog,self.camera.projection.matrix, self.camera.matrix],'center')
         self.sphere.rendprog([self.prog1,self.camera.projection.matrix, self.camera.matrix],'side')
+
     def physics(self, time: int, matrices): #time in seconds
-        print(matrices)
-        self.prog1.move([0,0.01,0])
+        self.prog1.translation = matrices
         self.prog1.moverot([3.14/100,0,0])
 '''
         time = self.tick

@@ -137,14 +137,17 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
             kernel32.Sleep(1)
         delta = time.perf_counter_ns()
 
+        if window.config.clear_color is not None:
+            window.clear(*window.config.clear_color)
+        
+        # Always bind the window framebuffer before calling render
+        window.use()
+
         try:
             coords = buffer[0].get(block=False)
         except Empty:
             pass
-        if window.config.clear_color is not None:
-            window.clear(*window.config.clear_color)
-        # Always bind the window framebuffer before calling render
-        window.use()
+        
         window.render(delta, delta)
         window.config.physics(delta, coords)
 
@@ -167,4 +170,4 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
 
 
 if __name__ == "__main__":
-    run(Game, args=('-vs','False','--window','glfw','-fps','100'))
+    run(Game, args=('-vs','False','--window','glfw','-fps','144'))

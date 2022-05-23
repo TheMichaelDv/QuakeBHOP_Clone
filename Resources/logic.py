@@ -28,13 +28,13 @@ def physics(queue):
     frametime = 19000000
     delta = 1000000000
 
-    p = poly([1,1,1])
+    p = poly([0,0,0])
     while True:
         sleep = ns()
         while delta+(ns()-sleep) < frametime:
             kernel32.Sleep(1) 
         delta = ns()   
-        p.relv(0.01,0.01,0.01)
+        p.relv(0,0.01,0)
         try:
             queue[0].put(p.shapes, block=False)
         except Full:
