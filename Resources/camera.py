@@ -215,5 +215,5 @@ class spheres():
             return None
     def rendprog(self, shaders: shaders, proj, camera):
         shaders.render(proj = proj, camera = camera)
-        for name in self.cubes:
+        for name in self.spheres:
             self.spheres[name].render(shaders[0][name])

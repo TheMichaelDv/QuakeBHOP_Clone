@@ -45,7 +45,7 @@ Basic Multiprocessing Impmentation, Engine currently houses a process that does 
 from moderngl_window import *
 import moderngl_window
 from multiprocessing import Process, Queue
-from queue import Empty
+from queue import Empty, Full
 from Resources.texturecube import Game
 from Resources import logic
 import time
@@ -119,7 +119,6 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
     engine = Process(target=logic.physics, args=(buffer,))
     engine.start()
 
-    current_time = time.perf_counter_ns()
     delta = 0
     coords = {}
 
@@ -127,6 +126,7 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
     kernel32.timeBeginPeriod(UINT(1))
 
     timer.start()
+    current_time = time.perf_counter_ns()
     while not window.is_closing:
 
         #busy wait function in order to not exceed the frametime, but pegs cpu at 100% looking into solutions, time.sleep is inaccurate up to 2-4ms too inaccurate.
@@ -142,13 +142,19 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
         
         # Always bind the window framebuffer before calling render
         window.use()
+        
+        proj, camera = window.config.render(delta, delta)
+
+        try:
+            buffer[1].put((proj, camera), block=False)
+        except Full:
+            pass
 
         try:
             coords = buffer[0].get(block=False)
         except Empty:
             pass
-        
-        window.render(delta, delta)
+
         window.config.physics(delta, coords)
 
         if not window.is_closing:

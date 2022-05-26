@@ -27,6 +27,7 @@ class Game(CameraWindow):
         self.texture = self.load_texture_array('Images/help.png', layers=1, mipmap=True, anisotrpy=4.0)
         self.progs = shaders(simpleshader(self.load_program('Shaders/texture.glsl'), name='center'))
         self.progs.shader = simpleshader(self.load_program('Shaders/texture.glsl'), name='sides')
+
         self.progs.shader['center'].shader['texture0'] = 0
         self.progs.shader['sides'].shader['texture0'] = 0
 
@@ -36,7 +37,9 @@ class Game(CameraWindow):
         #TLDR: Euler Angles rotate the cube x radians in each axis,    
         #this is why we abstract or else this would be 10 lines instead of 4 
         self.texture.use(location=0)
+        #self.camera.projection.matrix = Matrix44.identity(dtype='f4')
         self.cube.rendprog(self.progs,self.camera.projection.matrix, self.camera.matrix)
+        return self.camera.projection.matrix, self.camera.matrix
 
     def physics(self, time: int, matrices: dict): #time in seconds
         for name in matrices.keys():

@@ -34,10 +34,15 @@ class obj():
             return None
         self._shapes[name]['tran'] = tran
         self._shapes[name]['rot'] = rot
+
+def pos(proj, camera):
+    #print(proj)
+    print(camera)
 def physics(queue):
     kernel32 = windll.kernel32
     kernel32.timeBeginPeriod(wintypes.UINT(1))
 
+    hitbox = None
     frametime = 19000000
     delta = 1000000000
 
@@ -50,17 +55,20 @@ def physics(queue):
 
         p.move('center',tran=np.array([0,0.01,0]))
         p.move('sides', rot=np.array([3.14/500,0,0]))
+
+        
         try:
             queue[0].put(p.shapes, block=False)
         except Full:
-            kernel32.Sleep(1)
+            pass
         try:
-            if queue[1].get(block=False):
-                break
+            hitbox = queue[1].get(block=False)
         except Empty:
             pass
-        except Full:
-            pass
+        if type(hitbox) == type(tuple()):
+            pos(hitbox[0], hitbox[1])
+        if hitbox == True:
+            break
         delta = ns() - delta
     kernel32.timeEndPeriod(wintypes.UINT(1))
 '''
