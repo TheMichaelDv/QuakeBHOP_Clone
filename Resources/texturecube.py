@@ -22,13 +22,13 @@ class Game(CameraWindow):
         self.wnd.mouse_exclusivity = True
 
         self.cube = cubes(geometry.cube(name='center'))
-        self.sphere = cubes(geometry.cube(size=(2,2,2), name='side'))
-        self.camera.set_position(5,0,0)
+        self.cube.add(geometry.cube(size=(2,2,2), name='sides'))
+        self.camera.set_position(2,0,0)
         self.texture = self.load_texture_array('Images/help.png', layers=1, mipmap=True, anisotrpy=4.0)
-        self.prog = simpleshader(self.load_program('Shaders/texture.glsl'), name='center')
-        self.prog1 = simpleshader(self.load_program('Shaders/texture.glsl'), name='side')
-        self.prog.shader['texture0'] = 0
-        self.prog1.shader['texture0'] = 0
+        self.progs = shaders(simpleshader(self.load_program('Shaders/texture.glsl'), name='center'))
+        self.progs.shader = simpleshader(self.load_program('Shaders/texture.glsl'), name='sides')
+        self.progs.shader['center'].shader['texture0'] = 0
+        self.progs.shader['sides'].shader['texture0'] = 0
 
     def render(self, time: int, frametime: float):
         self.ctx.enable_only(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
@@ -36,12 +36,12 @@ class Game(CameraWindow):
         #TLDR: Euler Angles rotate the cube x radians in each axis,    
         #this is why we abstract or else this would be 10 lines instead of 4 
         self.texture.use(location=0)
-        self.cube.rendprog([self.prog,self.camera.projection.matrix, self.camera.matrix],'center')
-        self.sphere.rendprog([self.prog1,self.camera.projection.matrix, self.camera.matrix],'side')
+        self.cube.rendprog(self.progs,self.camera.projection.matrix, self.camera.matrix)
 
-    def physics(self, time: int, matrices): #time in seconds
-        self.prog1.translation = matrices
-        self.prog1.moverot([3.14/100,0,0])
+    def physics(self, time: int, matrices: dict): #time in seconds
+        for name in matrices.keys():
+            self.progs.shader[name].translation = matrices[name]['tran']
+            self.progs.shader[name].rotation = matrices[name]['rot']
 '''
         time = self.tick
 

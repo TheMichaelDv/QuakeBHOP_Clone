@@ -121,7 +121,7 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
 
     current_time = time.perf_counter_ns()
     delta = 0
-    coords = [0,0,0]
+    coords = {}
 
     kernel32 = windll.kernel32
     kernel32.timeBeginPeriod(UINT(1))
@@ -170,4 +170,4 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
 
 
 if __name__ == "__main__":
-    run(Game, args=('-vs','False','--window','glfw','-fps','144'))
+    run(Game, args=('-vs','False','--window','glfw','-fps','120'))

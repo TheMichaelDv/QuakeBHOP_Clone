@@ -83,57 +83,7 @@ class CameraWindow(mglw.WindowConfig):
                         t += 1/10
                     else: 
                         c = False'''
-class cubes():
-    def __init__(self):
-        self.cubes = []
-    def __init__(self, cube: VAO):
-        self.cubes = {
-            cube.name: cube, #cube, trans, rot
-        }
-    def add(self, cube: VAO):
-        self.cubes[cube.name] = cube
-    def find(self, name):
-        try:
-            return self.cubes[name]
-        except:
-            return None
-    def remove(self, name):
-        try:
-            self.cubes[name].release()
-        except:
-            return None
-    def rendprog(self, shaders, name):
-        shaders[0].run(shaders[1],shaders[2])
-        try:
-            self.cubes[name].render(shaders[0].shader)
-        except:
-            raise TypeError
 
-class spheres():
-    def __init__(self):
-        self.spheres = []
-    def __init__(self, sphere: VAO):
-        self.spheres = {
-            sphere.name: sphere, #sphere, trans, rot
-        }
-    def add(self, sphere: VAO):
-        self.spheres[sphere.name] = sphere
-    def find(self, name):
-        try:
-            return self.spheres[name]
-        except:
-            return None
-    def remove(self, name):
-        try:
-            self.spheres[name].release()
-        except:
-            return None
-    def rendprog(self, shaders, name):
-        shaders[0].run(shaders[1],shaders[2])
-        try:
-            self.spheres[name].render(shaders[0].shader)
-        except:
-            raise TypeError
 class simpleshader():
     '''
     removes the need to spam the
@@ -198,8 +148,72 @@ class simpleshader():
         self.shader['m_model'].write(Matrix44.from_translation(self.translation, dtype='f4') * Matrix44.from_eulers(self.rotation, dtype='f4'))
         self.shader['m_camera'].write(camera)
 class shaders():
-    def __init__(self) -> None:
-        self.shaders = []
-    def run(self, camera) -> None:
-        for n in shaders:
-            n.run(camera)
+
+    _shader = {
+    }
+
+    def __init__(self, shader: simpleshader) -> None:
+        self._shader[shader.name] = shader
+    @property
+    def shader(self):
+        return self._shader
+    @shader.setter
+    def shader(self, shader: simpleshader):
+        self._shader[shader.name] = shader
+    @shader.deleter
+    def shader(self):
+        for name in self._shader.keys():
+            del self._shader[name]
+    def named(self, name):
+        return self._shader[name]
+    def render(self, proj = None, camera = None):
+        for name in self._shader.keys():
+            self._shader[name].run(proj, camera)
+
+class cubes():
+    def __init__(self):
+        self.cubes = []
+    def __init__(self, cube: VAO):
+        self.cubes = {
+            cube.name: cube, #cube, trans, rot
+        }
+    def add(self, cube: VAO):
+        self.cubes[cube.name] = cube
+    def find(self, name):
+        try:
+            return self.cubes[name]
+        except:
+            return None
+    def remove(self, name):
+        try:
+            self.cubes[name].release()
+        except:
+            return None
+    def rendprog(self, shaders: shaders, proj, camera):
+        shaders.render(proj = proj, camera = camera)
+        for name in self.cubes:
+            self.cubes[name].render(shaders.named(name).shader)
+
+class spheres():
+    def __init__(self):
+        self.spheres = []
+    def __init__(self, sphere: VAO):
+        self.spheres = {
+            sphere.name: sphere, #sphere, trans, rot
+        }
+    def add(self, sphere: VAO):
+        self.spheres[sphere.name] = sphere
+    def find(self, name):
+        try:
+            return self.spheres[name]
+        except:
+            return None
+    def remove(self, name):
+        try:
+            self.spheres[name].release()
+        except:
+            return None
+    def rendprog(self, shaders: shaders, proj, camera):
+        shaders.render(proj = proj, camera = camera)
+        for name in self.cubes:
+            self.spheres[name].render(shaders[0][name])
