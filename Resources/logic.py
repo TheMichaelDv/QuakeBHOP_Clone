@@ -36,13 +36,27 @@ class obj():
         self._shapes[name]['rot'] = rot
 
 def pos(proj, camera):
-    #print(proj)
-    print(camera)
+        if camera[0] < 1 and camera[1] < 1.25 and camera[1] > 1 and camera[0] > -1 and camera[2] < 1 and camera[2] > -1:
+            camera = [True, camera[0],1.25,camera[2]]
+        if camera[0] < 1 and camera[1] < -1.75 and camera[1] > -2 and camera[0] > -1 and camera[2] < 1 and camera[2] > -1:
+            camera = [True, camera[0],-2,camera[2]]
+        if camera[0] < 1 and camera[1] < 1.75 and camera[1] > -1.75 and camera[0] > -1 and camera[2] > 1 and camera[2] < 1.25:
+            camera = [True, camera[0],camera[1],1.25]
+        if camera[0] < 1 and camera[1] < 1.75 and camera[1] > -1.75 and camera[0] > -1 and camera[2] > -1.25 and camera[2] < -1:
+            camera = [True, camera[0],camera[1],-1.25]
+        if camera[0] < -1 and camera[1] < 1.75 and camera[1] > -1.75 and camera[0] > -1.25 and camera[2] > -1 and camera[2] < 1:
+            camera = [True, -1.25,camera[1],camera[2]]
+        if camera[0] > 1 and camera[1] < 1.75 and camera[1] > -1.75 and camera[0] < 1.25 and camera[2] > -1 and camera[2] < 1:
+            camera = [True, 1.25,camera[1],camera[2]]
+        if camera[0] != True:
+            camera = [False]
+        return camera
 def physics(queue):
     kernel32 = windll.kernel32
     kernel32.timeBeginPeriod(wintypes.UINT(1))
 
     hitbox = None
+    camera = [2,0,0]
     frametime = 19000000
     delta = 1000000000
 
@@ -56,9 +70,9 @@ def physics(queue):
         p.move('center',tran=np.array([0,0.01,0]))
         p.move('sides', rot=np.array([3.14/500,0,0]))
 
-        
+
         try:
-            queue[0].put(p.shapes, block=False)
+            queue[0].put((p.shapes, camera), block=False)
         except Full:
             pass
         try:
@@ -66,7 +80,7 @@ def physics(queue):
         except Empty:
             pass
         if type(hitbox) == type(tuple()):
-            pos(hitbox[0], hitbox[1])
+            camera = pos(hitbox[0], hitbox[1])
         if hitbox == True:
             break
         delta = ns() - delta

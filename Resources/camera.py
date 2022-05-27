@@ -13,7 +13,7 @@ class CameraWindow(mglw.WindowConfig):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.camera = KeyboardCamera(self.wnd.keys, aspect_ratio=self.wnd.aspect_ratio)
+        self.camera = KeyboardCamera(self.wnd.keys, aspect_ratio=self.wnd.aspect_ratio, near = 0.15)
         self.camera_enabled = True
         self.keys = Keys()
 
@@ -57,7 +57,9 @@ class CameraWindow(mglw.WindowConfig):
                 self.camera.move_down(True)
             if action == self.keys.ACTION_RELEASE:
                 self.camera.move_down(False)
-
+        elif key == keys.C:
+            if action == self.keys.ACTION_PRESS:
+                self.camera.set_position(1,2,3)
     def mouse_position_event(self, x: int, y: int, dx, dy):
         if self.camera_enabled:
             self.camera.rot_state(-dx, -dy)

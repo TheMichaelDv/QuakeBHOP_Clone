@@ -21,6 +21,8 @@ class Game(CameraWindow):
         super().__init__(**kwargs)
         self.wnd.mouse_exclusivity = True
 
+        self.camera.velocity = 5
+
         self.cube = cubes(geometry.cube(name='center'))
         self.cube.add(geometry.cube(size=(2,2,2), name='sides'))
         self.camera.set_position(2,0,0)
@@ -39,12 +41,15 @@ class Game(CameraWindow):
         self.texture.use(location=0)
         #self.camera.projection.matrix = Matrix44.identity(dtype='f4')
         self.cube.rendprog(self.progs,self.camera.projection.matrix, self.camera.matrix)
-        return self.camera.projection.matrix, self.camera.matrix
+        return self.camera.projection.matrix, self.camera.position
 
     def physics(self, time: int, matrices: dict): #time in seconds
-        for name in matrices.keys():
-            self.progs.shader[name].translation = matrices[name]['tran']
-            self.progs.shader[name].rotation = matrices[name]['rot']
+        for name in matrices[0].keys():
+            self.progs.shader[name].translation = matrices[0][name]['tran']
+            #self.progs.shader[name].rotation = matrices[0][name]['rot']
+        pos = matrices[1]
+        if pos[0] == True:
+            self.camera.set_position(pos[1],pos[2],pos[3])
 '''
         time = self.tick
 

@@ -5,7 +5,7 @@ Finally Main game loop XDDD
 Basically the tick loop HAS to be separate from frametime so game logic can be run on a diff schedule than frametime
 because this allows for unlimited frames and I can set things on a linear time scale. In addition, if a player lags, the game will still be logical.
 http://gameprogrammingpatterns.com/game-loop.html for further reading
-
+s s 
 However I need to implement the running of the render function differently than what the module initally offers. 
 I cannot modify the module itself as it will not update on your machine.
 Its copy and pasted from moderngl_window.__init__.run_window_config()
@@ -120,7 +120,7 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
     engine.start()
 
     delta = 0
-    coords = {}
+    coords = [{},[False]]
 
     kernel32 = windll.kernel32
     kernel32.timeBeginPeriod(UINT(1))
