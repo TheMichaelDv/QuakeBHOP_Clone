@@ -10,12 +10,18 @@ import pygame
 import moderngl_window
 from moderngl_window import geometry
 from Resources.camera import *
+from Resources.Models.level import *
 
 import math
 import time as a
 
 class Game(CameraWindow):
     title = "Fun"
+    objects = {
+        "cubes": cubes(),
+        "spheres": spheres()
+    }
+    progs = shaders()
     resource_dir = (Path(__file__).parent).resolve()
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -23,24 +29,21 @@ class Game(CameraWindow):
 
         self.camera.velocity = 5
 
-        self.cube = cubes(geometry.cube(name='center'))
-        self.cube.add(geometry.cube(size=(2,2,2), name='sides'))
+        self.objects['cubes'].add(geometry.cube(name='center'))
+        self.objects['cubes'].add(geometry.cube(size=(2,2,2), name='sides'))
         self.camera.set_position(2,0,0)
         self.texture = self.load_texture_array('Images/help.png', layers=1, mipmap=True, anisotrpy=4.0)
-        self.progs = shaders(simpleshader(self.load_program('Shaders/texture.glsl'), name='center'))
+        self.load_level()
         self.progs.shader = simpleshader(self.load_program('Shaders/texture.glsl'), name='sides')
-
-        self.progs.shader['center'].shader['texture0'] = 0
-        self.progs.shader['sides'].shader['texture0'] = 0
 
     def render(self, time: int, frametime: float):
         self.ctx.enable_only(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
-        
-        #TLDR: Euler Angles rotate the cube x radians in each axis,    
-        #this is why we abstract or else this would be 10 lines instead of 4 
+
         self.texture.use(location=0)
-        #self.camera.projection.matrix = Matrix44.identity(dtype='f4')
-        self.cube.rendprog(self.progs,self.camera.projection.matrix, self.camera.matrix)
+        
+        self.objects['cubes'].rendprog(self.progs,self.camera.projection.matrix, self.camera.matrix)
+        self.objects['spheres'].rendprog(self.progs,self.camera.projection.matrix, self.camera.matrix)
+
         return self.camera.projection.matrix, self.camera.position
 
     def physics(self, time: int, matrices: dict): #time in seconds
@@ -50,6 +53,13 @@ class Game(CameraWindow):
         pos = matrices[1]
         if pos[0] == True:
             self.camera.set_position(pos[1],pos[2],pos[3])
+    def load_level(self):
+        level = scene('scene.json')
+        figure = level.level
+        for name in figure:
+            if figure[name]['rectangle'] == TRUE:
+                self.objects["cubes"].add(geometry.cube(size=(figure[name]['size']['x'],figure[name]['size']['y'],figure[name]['size']['z']),name=name))
+                self.progs.shader = simpleshader(self.load_program('Shaders/' + figure[name]['shader']), name=name)
 '''
         time = self.tick
 

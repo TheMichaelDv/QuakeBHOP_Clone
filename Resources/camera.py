@@ -99,9 +99,7 @@ class simpleshader():
     _rotation = [0,0,0]
     _translation = [0,0,0]
     fields = []
-    def __init__(self):
-        self._shader = None
-    def __init__(self, prog: Program, name = None):
+    def __init__(self, prog = None, name = None):
         self._shader = prog
         self.name = name
     @property
@@ -154,8 +152,11 @@ class shaders():
     _shader = {
     }
 
-    def __init__(self, shader: simpleshader) -> None:
-        self._shader[shader.name] = shader
+    def __init__(self, shader = None) -> None:
+        if shader == None:
+            pass
+        else:
+            self._shader[shader.name] = shader
     @property
     def shader(self):
         return self._shader
@@ -173,12 +174,13 @@ class shaders():
             self._shader[name].run(proj, camera)
 
 class cubes():
-    def __init__(self):
-        self.cubes = []
-    def __init__(self, cube: VAO):
-        self.cubes = {
-            cube.name: cube, #cube, trans, rot
-        }
+    def __init__(self, cube = None):
+        if cube == None:
+            self.cubes = {}
+        else:
+            self.cubes = {
+                cube.name: cube, #cube, trans, rot
+            }
     def add(self, cube: VAO):
         self.cubes[cube.name] = cube
     def find(self, name):
@@ -197,12 +199,13 @@ class cubes():
             self.cubes[name].render(shaders.named(name).shader)
 
 class spheres():
-    def __init__(self):
-        self.spheres = []
-    def __init__(self, sphere: VAO):
-        self.spheres = {
-            sphere.name: sphere, #sphere, trans, rot
-        }
+    def __init__(self, sphere = None):
+        if sphere == None:
+            self.spheres = {}
+        else:
+            self.spheres = {
+                sphere.name: sphere, #sphere, trans, rot
+            }
     def add(self, sphere: VAO):
         self.spheres[sphere.name] = sphere
     def find(self, name):

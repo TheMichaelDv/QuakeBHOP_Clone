@@ -48,6 +48,7 @@ from multiprocessing import Process, Queue
 from queue import Empty, Full
 from Resources.texturecube import Game
 from Resources import logic
+from Resources.Models.level import *
 import time
 from ctypes import windll
 from ctypes.wintypes import UINT

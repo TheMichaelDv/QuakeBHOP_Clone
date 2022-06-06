@@ -1,0 +1,50 @@
+{
+    "center": {
+        "corner": {
+            "lttc": {
+                "x": -1, 
+                "y": 1,
+                "z": -1
+            },
+            "rbbc": {
+                "x": 1, 
+                "y": -1,
+                "z": 1
+            }
+        },
+        "floating": "True",
+        "sphere": "False",
+        "collision": "True",
+        "rectangle": "True",
+        "shader": "Texture.glsl",
+        "size": {
+            "x": 2,
+            "y": 2,
+            "z": 2
+        }
+    },
+    "wall": {
+        "floating": "True",
+        "sphere": "False",
+        "collision": "True",
+        "rectangle": "True",
+        "shader": "Simple Shader.glsl",
+        "size": {
+            "x": 4,
+            "y": 3,
+            "z": 1
+        },
+        "corner": {
+            "lttc": {
+                "x": 4,
+                "y": 0,
+                "z": 4
+            },
+            "rbbc": {
+                "x": 0,
+                "y": 5,
+                "z": 0
+            }
+        }
+    }
+}
