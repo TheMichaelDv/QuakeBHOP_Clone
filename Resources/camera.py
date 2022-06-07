@@ -124,7 +124,7 @@ class simpleshader():
     def translation(self,matrix):
         self._translation = matrix
     def move(self,mod):
-        self.translation = [self.translation[0]+mod[0],self.translation[1]-mod[1],self.translation[2]-mod[2]]
+        self.translation = [self.translation[0]+mod[0],self.translation[1]+mod[1],self.translation[2]+mod[2]]
     @property
     def rotation(self):
         return self._rotation
@@ -132,7 +132,7 @@ class simpleshader():
     def rotation(self, matrix):
         self._rotation = matrix
     def moverot(self,mod):
-        self._rotation = [self._rotation[0]+mod[0],self._rotation[1]-mod[1],self._rotation[2]-mod[2]]
+        self._rotation = [self._rotation[0]+mod[0],self._rotation[1]+mod[1],self._rotation[2]+mod[2]]
     def fieldadd(self, fields):
         self.fields = fields
     def write(self, data):

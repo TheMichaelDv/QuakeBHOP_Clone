@@ -27,7 +27,7 @@ void main() {
     normal = m_normal * normalize(in_normal);
     pos = vec3(1,1,1);
     */
-    pos = vec3(m_model * vec4(in_position, 5.0));
+    pos = vec3(m_model * vec4(in_position, 1.0));
     normal = in_normal;  
     
     gl_Position = m_proj * m_camera * vec4(pos, 1.0);

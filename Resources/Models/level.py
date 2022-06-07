@@ -16,17 +16,12 @@ Name{
         y: int,
         z: int
     },
-    corners: { #for orientation
-        lttc: {
-            x: int,
-            y: int,
-            z: int
-        },
-        rbbc: {
-            x: int,
-            y: int,
-            z: int,
-        }
+    Center: {
+        x: int,
+        y: int,
+        z: int
+    },
+    Rotation: float #in radians
     }
 }
 '''

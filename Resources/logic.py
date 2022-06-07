@@ -3,7 +3,7 @@ from multiprocessing.sharedctypes import Value
 from queue import Empty, Full
 from time import perf_counter_ns as ns
 import numpy as np
-
+from Resources.Models.level import *
 '''
 TODO: Add modularity and reuseablity
 '''
@@ -16,14 +16,18 @@ class obj():
         for name in names:
             self._shapes[name] = {
                 'tran': np.array([0,0,0],dtype='float64'),
-                'rot': np.array([0,0,0],dtype='float64')
+                'rot': np.array([0,0,0],dtype='float64'),
+                'collision': None
             }
     @property
     def shapes(self):
         return self._shapes
     @shapes.setter
-    def shapes(self, shape: dict) -> None:
-        self._shapes = shape
+    def shapes(self, name) -> None:
+        self._shapes[name] = {
+                'tran': np.array([0,0,0],dtype='float64'),
+                'rot': np.array([0,0,0],dtype='float64')
+        }
     def move(self, name, tran = np.array([0,0,0],dtype='float64'), rot = np.array([0,0,0],dtype='float64')):
         if name not in self._shapes:
             return None
@@ -34,19 +38,29 @@ class obj():
             return None
         self._shapes[name]['tran'] = tran
         self._shapes[name]['rot'] = rot
+    def hitbox(self, name):
+        shape = np.ndarray((8,3),dtype='float64')
+        #someone write this alg
+        #given two tuples containing the center and the size of a cuboid, create a 2 dimentional array with each row containing the coords of the corners
 
-def pos(proj, camera):
+def pos(hit, camera):
         #print(camera)
+        #top
         if camera[0] < 1 and camera[1] < 1.25 and camera[1] > 1 and camera[0] > -1 and camera[2] < 1 and camera[2] > -1:
             camera = [True, camera[0],1.25,camera[2]]
+        #bottom
         if camera[0] < 1 and camera[1] > -1.25 and camera[1] < -1 and camera[0] > -1 and camera[2] < 1 and camera[2] > -1:
             camera = [True, camera[0],-1.25,camera[2]]
+        #left
         if camera[0] < 1 and camera[1] < 1 and camera[1] > -1 and camera[0] > -1 and camera[2] > 1 and camera[2] < 1.25:
             camera = [True, camera[0],camera[1],1.25]
+        #right
         if camera[0] < 1 and camera[1] < 1 and camera[1] > -1 and camera[0] > -1 and camera[2] > -1.25 and camera[2] < -1:
             camera = [True, camera[0],camera[1],-1.25]
+        #front
         if camera[0] < -1 and camera[1] < 1 and camera[1] > -1 and camera[0] > -1.25 and camera[2] > -1 and camera[2] < 1:
             camera = [True, -1.25,camera[1],camera[2]]
+        #back
         if camera[0] > 1 and camera[1] < 1 and camera[1] > -1 and camera[0] < 1.25 and camera[2] > -1 and camera[2] < 1:
             camera = [True, 1.25,camera[1],camera[2]]
         if camera[0] != True:
@@ -61,16 +75,20 @@ def physics(queue):
     frametime = 19000000
     delta = 1000000000
 
-    p = obj(['center','wall'])
+    lvl = scene('scene.json')
+    things = lvl.level    
+
+    p = obj([name for name in things])
+    for t in things:
+        p.set(t, tran = np.array([things[t]['center']['x'],things[t]['center']['y'],things[t]['center']['z']],dtype='float64'))
     while True:
         sleep = ns()
         while delta+(ns()-sleep) < frametime:
             kernel32.Sleep(1) 
         delta = ns()   
 
-        p.move('center',tran=np.array([0,0.01,0]))
-        p.move('wall', rot=np.array([3.14/500,0,0]))
-
+        #p.move('center',tran=np.array([0,0.01,0]))
+        #p.move('sides', rot=np.array([0,0.01,0]))
 
         try:
             queue[0].put((p.shapes, camera), block=False)

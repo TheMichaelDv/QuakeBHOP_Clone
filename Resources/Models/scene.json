@@ -1,16 +1,10 @@
 {
     "center": {
-        "corner": {
-            "lttc": {
-                "x": -1, 
-                "y": 1,
-                "z": -1
-            },
-            "rbbc": {
-                "x": 1, 
-                "y": -1,
-                "z": 1
-            }
+        "rotation": 0,
+        "center": {
+            "x": 1,
+            "y": 1,
+            "z": 1
         },
         "floating": "True",
         "sphere": "False",
@@ -23,7 +17,7 @@
             "z": 2
         }
     },
-    "wall": {
+    "sides": {
         "floating": "True",
         "sphere": "False",
         "collision": "True",
@@ -34,17 +28,11 @@
             "y": 3,
             "z": 1
         },
-        "corner": {
-            "lttc": {
-                "x": 4,
-                "y": 0,
-                "z": 4
-            },
-            "rbbc": {
-                "x": 0,
-                "y": 5,
-                "z": 0
-            }
-        }
+        "center": {
+            "x": 2,
+            "y": 3,
+            "z": 4
+        },
+        "rotation": 0
     }
 }

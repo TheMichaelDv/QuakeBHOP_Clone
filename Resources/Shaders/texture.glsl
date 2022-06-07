@@ -30,6 +30,6 @@ void main() {
 
     // Interpolate between the two texture layers
     float t = mod(100, 1.0);
-    fragColor = (c1 * (1.0 - t) + c2 * t) + vec4(0.25);
+    fragColor = (c1) + vec4(0);
 }
 #endif

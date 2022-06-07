@@ -29,18 +29,18 @@ class Game(CameraWindow):
 
         self.camera.velocity = 5
 
-        self.objects['cubes'].add(geometry.cube(name='center'))
-        self.objects['cubes'].add(geometry.cube(size=(2,2,2), name='sides'))
+        #self.objects['cubes'].add(geometry.cube(name='center'))
+        #self.objects['cubes'].add(geometry.cube(size=(2,2,2), name='sides'))
         self.camera.set_position(2,0,0)
         self.texture = self.load_texture_array('Images/help.png', layers=1, mipmap=True, anisotrpy=4.0)
         self.load_level()
-        self.progs.shader = simpleshader(self.load_program('Shaders/texture.glsl'), name='sides')
+        #self.progs.shader = simpleshader(self.load_program('Shaders/texture.glsl'), name='sides')
 
     def render(self, time: int, frametime: float):
         self.ctx.enable_only(moderngl.CULL_FACE | moderngl.DEPTH_TEST)
-
-        self.texture.use(location=0)
         
+        self.texture.use(location=0)
+
         self.objects['cubes'].rendprog(self.progs,self.camera.projection.matrix, self.camera.matrix)
         self.objects['spheres'].rendprog(self.progs,self.camera.projection.matrix, self.camera.matrix)
 
@@ -49,7 +49,7 @@ class Game(CameraWindow):
     def physics(self, time: int, matrices: dict): #time in seconds
         for name in matrices[0].keys():
             self.progs.shader[name].translation = matrices[0][name]['tran']
-            #self.progs.shader[name].rotation = matrices[0][name]['rot']
+            self.progs.shader[name].rotation = matrices[0][name]['rot']
         pos = matrices[1]
         if pos[0] == True:
             self.camera.set_position(pos[1],pos[2],pos[3])
