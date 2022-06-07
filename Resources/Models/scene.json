@@ -11,6 +11,12 @@
         "collision": "True",
         "rectangle": "True",
         "shader": "Texture.glsl",
+        "color": {
+            "r": 2,
+            "g": 4,
+            "b": 40,
+            "a": 0
+        },
         "size": {
             "x": 2,
             "y": 2,
@@ -27,6 +33,12 @@
             "x": 4,
             "y": 3,
             "z": 1
+        },
+        "color": {
+            "r": 2,
+            "g": 4,
+            "b": 40,
+            "a": 0
         },
         "center": {
             "x": 2,

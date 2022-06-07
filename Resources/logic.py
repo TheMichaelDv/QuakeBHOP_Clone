@@ -38,10 +38,16 @@ class obj():
             return None
         self._shapes[name]['tran'] = tran
         self._shapes[name]['rot'] = rot
-    def hitbox(self, name):
-        shape = np.ndarray((8,3),dtype='float64')
-        #someone write this alg
-        #given two tuples containing the center and the size of a cuboid, create a 2 dimentional array with each row containing the coords of the corners
+    def hitbox(self, name, cuboidCtr, cuboidSize):
+        boolList = [[-1, -1, -1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1], [1, -1, -1], [1, 1, -1], [-1, 1, 1], [1, 1, 1]]
+        shape = []
+        for i in range(8):
+            temp = [0,0,0]
+            temp[0] = cuboidCtr[0] + boolList[i][0] * cuboidSize[0] / 2
+            temp[1] = cuboidCtr[1] + boolList[i][1] * cuboidSize[1] / 2
+            temp[2] = cuboidCtr[2] + boolList[i][2] * cuboidSize[2] / 2
+            shape.append(temp)
+        self._shapes[name]['collision'] = np.array(shape,dtype='float64')
 
 def pos(hit, camera):
         #print(camera)
@@ -81,6 +87,9 @@ def physics(queue):
     p = obj([name for name in things])
     for t in things:
         p.set(t, tran = np.array([things[t]['center']['x'],things[t]['center']['y'],things[t]['center']['z']],dtype='float64'))
+        p.hitbox(t,[things[t]['center']['x'],things[t]['center']['y'],things[t]['center']['z']], [things[t]['size']['x'],things[t]['size']['y'],things[t]['size']['z']])
+
+        print(p.shapes)
     while True:
         sleep = ns()
         while delta+(ns()-sleep) < frametime:
