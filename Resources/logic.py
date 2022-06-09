@@ -39,7 +39,8 @@ class obj():
         self._shapes[name]['tran'] = tran
         self._shapes[name]['rot'] = rot
     def hitbox(self, name, cuboidCtr, cuboidSize):
-        boolList = [[-1, -1, -1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1], [1, -1, -1], [1, 1, -1], [-1, 1, 1], [1, 1, 1]]
+        #4 5 6 7 top, 2 3 4 5 front, 7 3 left, 5 7 4 0 rigt, 6 7 1 0 back, 0 1 2 3 bottom
+        boolList = [[-1, -1, -1], [-1, -1, 1], [1, -1, 1], [1, -1, -1], [1, 1, 1],[1, 1, -1], [-1, 1, 1], [-1, 1, -1]]
         shape = []
         for i in range(8):
             temp = [0,0,0]
@@ -50,25 +51,25 @@ class obj():
         self._shapes[name]['collision'] = np.array(shape,dtype='float64')
 
 def pos(hit, camera):
-        #print(camera)
         #top
-        if camera[0] < 1 and camera[1] < 1.25 and camera[1] > 1 and camera[0] > -1 and camera[2] < 1 and camera[2] > -1:
-            camera = [True, camera[0],1.25,camera[2]]
+        # camera[0] = x,  camera[1] = y,  camera[2] = z  
+        if camera[0] < hit[4][0] and camera[1] < hit[4][1] + .25 and camera[1] > hit[7][1] and camera[0] > hit[7][0] and camera[2] < hit[4][2] and camera[2] > hit[7][2]:
+            camera = [True, camera[0],hit[4][1]+0.25,camera[2]]
         #bottom
-        if camera[0] < 1 and camera[1] > -1.25 and camera[1] < -1 and camera[0] > -1 and camera[2] < 1 and camera[2] > -1:
-            camera = [True, camera[0],-1.25,camera[2]]
-        #left
-        if camera[0] < 1 and camera[1] < 1 and camera[1] > -1 and camera[0] > -1 and camera[2] > 1 and camera[2] < 1.25:
-            camera = [True, camera[0],camera[1],1.25]
-        #right
-        if camera[0] < 1 and camera[1] < 1 and camera[1] > -1 and camera[0] > -1 and camera[2] > -1.25 and camera[2] < -1:
-            camera = [True, camera[0],camera[1],-1.25]
-        #front
-        if camera[0] < -1 and camera[1] < 1 and camera[1] > -1 and camera[0] > -1.25 and camera[2] > -1 and camera[2] < 1:
-            camera = [True, -1.25,camera[1],camera[2]]
-        #back
-        if camera[0] > 1 and camera[1] < 1 and camera[1] > -1 and camera[0] < 1.25 and camera[2] > -1 and camera[2] < 1:
-            camera = [True, 1.25,camera[1],camera[2]]
+        if camera[0] < hit[2][0] and camera[1] > hit[2][1] - 0.25 and camera[1] < hit[2][1] and camera[0] > hit[0][0] and camera[2] < hit[2][2] and camera[2] > hit[0][2]:
+            camera = [True, camera[0], hit[3][1] - 0.25,camera[2]]
+        #left [1, -1, -1] [-1, 1, -1] 2 7
+        if camera[0] < hit[3][0] and camera[1] < hit[7][1] and camera[1] > hit[2][1] and camera[0] > hit[7][0] and camera[2] < hit[7][2] and camera[2] > hit[3][2] - .25:
+            camera = [True, camera[0],camera[1],hit[3][2] - 0.25]
+        #right [1,1,1] [-1,-1,1] 4 1
+        if camera[0] < hit[4][0] and camera[1] < hit[4][1] and camera[1] > hit[1][1] and camera[0] > hit[1][0] and camera[2] > hit[1][2] and camera[2] < hit[4][2] + .25:
+            camera = [True, camera[0],camera[1], hit[4][2] + 0.25]
+        #front [1,1,1] [1, -1, -1] 3 4
+        if camera[0] < hit[4][0] + 0.25 and camera[1] < hit[4][1] and camera[1] > hit[3][1] and camera[0] > hit[3][0] and camera[2] > hit[3][2] and camera[2] < hit[4][2]:
+            camera = [True, hit[4][0] + 0.25,camera[1],camera[2]]
+        #back [-1, 1, 1] [-1, -1, -1] 6 0
+        if camera[0] > hit[6][0] - 0.25 and camera[1] < hit[6][1] and camera[1] > hit[0][1] and camera[0] < hit[0][0] and camera[2] > hit[0][2] and camera[2] < hit[6][2]:
+            camera = [True, hit[6][0] - 0.25,camera[1],camera[2]]
         if camera[0] != True:
             camera = [False]
         return camera
@@ -86,10 +87,11 @@ def physics(queue):
 
     p = obj([name for name in things])
     for t in things:
-        p.set(t, tran = np.array([things[t]['center']['x'],things[t]['center']['y'],things[t]['center']['z']],dtype='float64'))
-        p.hitbox(t,[things[t]['center']['x'],things[t]['center']['y'],things[t]['center']['z']], [things[t]['size']['x'],things[t]['size']['y'],things[t]['size']['z']])
+        if things[t]['rectangle'] == TRUE:
+            p.set(t, tran = np.array([things[t]['center']['x'],things[t]['center']['y'],things[t]['center']['z']],dtype='float64'))
+            p.hitbox(t,[things[t]['center']['x'],things[t]['center']['y'],things[t]['center']['z']], [things[t]['size']['x'],things[t]['size']['y'],things[t]['size']['z']])
 
-        print(p.shapes)
+    print(p.shapes)
     while True:
         sleep = ns()
         while delta+(ns()-sleep) < frametime:
@@ -108,7 +110,10 @@ def physics(queue):
         except Empty:
             pass
         if type(hitbox) == type(tuple()):
-            camera = pos(hitbox[0], hitbox[1])
+            for k in things:
+                camera = pos(p.shapes[k]['collision'], hitbox[1])
+                if camera[0] == True:
+                    break
         if hitbox == True:
             break
         delta = ns() - delta

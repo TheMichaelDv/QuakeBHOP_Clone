@@ -3,7 +3,7 @@ from inspect import FrameInfo
 from os import truncate
 from pathlib import Path
 from turtle import pos
-from pyrr import Matrix44, Vector3
+from pyrr import Matrix44 
 
 import moderngl
 import pygame
@@ -32,7 +32,7 @@ class Game(CameraWindow):
         #self.objects['cubes'].add(geometry.cube(name='center'))
         #self.objects['cubes'].add(geometry.cube(size=(2,2,2), name='sides'))
         self.camera.set_position(2,0,0)
-        self.texture = self.load_texture_array('Images/help.png', layers=1, mipmap=True, anisotrpy=4.0)
+        self.texture = self.load_texture_array('Images/ayaka.jpg', layers=1, mipmap=True, anisotrpy=4.0)
         self.load_level()
         #self.progs.shader = simpleshader(self.load_program('Shaders/texture.glsl'), name='sides')
 
@@ -60,7 +60,11 @@ class Game(CameraWindow):
             if figure[name]['rectangle'] == TRUE:
                 self.objects["cubes"].add(geometry.cube(size=(figure[name]['size']['x'],figure[name]['size']['y'],figure[name]['size']['z']),name=name))
                 self.progs.shader = simpleshader(self.load_program('Shaders/' + figure[name]['shader']), name=name)
-'''
+                try:
+                    self.progs.shader[name].shader['color'].value = figure[name]['color']['r']/255, figure[name]['color']['g']/255, figure[name]['color']['b']/255, figure[name]['color']['a']
+                except KeyError:
+                    pass
+        '''
         time = self.tick
 
         num = abs(4 * math.sin(1/164 * time))

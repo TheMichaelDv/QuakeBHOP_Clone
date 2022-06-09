@@ -37,7 +37,7 @@ void main() {
 #elif defined FRAGMENT_SHADER
 
 out vec4 fragColor;
-//uniform vec4 color;
+uniform vec4 color;
 
 in vec3 pos;
 in vec3 normal;
@@ -47,6 +47,6 @@ void main() {
     vec3 ambient = ambientStrength * vec3(1,1,1);
 
     vec3 result = ambient * vec3(1,1,1);
-    fragColor = vec4(1,0.5,0.5,0.5);// * color This determines final color. Usually we define a uniform so we can modify it in python
+    fragColor = color;// * color This determines final color. Usually we define a uniform so we can modify it in python
 }
 #endif

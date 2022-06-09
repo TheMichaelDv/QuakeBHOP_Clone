@@ -2,20 +2,20 @@
     "center": {
         "rotation": 0,
         "center": {
-            "x": 1,
-            "y": 1,
-            "z": 1
+            "x": 0,
+            "y": 0,
+            "z": 0
         },
         "floating": "True",
         "sphere": "False",
         "collision": "True",
         "rectangle": "True",
-        "shader": "Texture.glsl",
+        "shader": "Simple Shader.glsl",
         "color": {
-            "r": 2,
-            "g": 4,
-            "b": 40,
-            "a": 0
+            "r": 68,
+            "g": 36,
+            "b": 89,
+            "a": 0.35
         },
         "size": {
             "x": 2,
@@ -28,17 +28,17 @@
         "sphere": "False",
         "collision": "True",
         "rectangle": "True",
-        "shader": "Simple Shader.glsl",
+        "shader": "Texture.glsl",
         "size": {
             "x": 4,
             "y": 3,
             "z": 1
         },
         "color": {
-            "r": 2,
-            "g": 4,
-            "b": 40,
-            "a": 0
+            "r": 87,
+            "g": 98,
+            "b": 145,
+            "a": 0.6
         },
         "center": {
             "x": 2,
