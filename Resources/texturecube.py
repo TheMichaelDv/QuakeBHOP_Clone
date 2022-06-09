@@ -50,9 +50,12 @@ class Game(CameraWindow):
         for name in matrices[0].keys():
             self.progs.shader[name].translation = matrices[0][name]['tran']
             self.progs.shader[name].rotation = matrices[0][name]['rot']
-        pos = matrices[1]
-        if pos[0] == True:
-            self.camera.set_position(pos[1],pos[2],pos[3])
+        for name in matrices[0].keys():
+            pos = self.hi(self.progs.shader[name].collision, self.camera.position)
+            if pos[0]:
+                self.camera.set_position(pos[1],pos[2],pos[3])
+                break
+
     def load_level(self):
         level = scene('scene.json')
         figure = level.level
@@ -60,10 +63,34 @@ class Game(CameraWindow):
             if figure[name]['rectangle'] == TRUE:
                 self.objects["cubes"].add(geometry.cube(size=(figure[name]['size']['x'],figure[name]['size']['y'],figure[name]['size']['z']),name=name))
                 self.progs.shader = simpleshader(self.load_program('Shaders/' + figure[name]['shader']), name=name)
+                self.progs.shader[name].collision = self.progs.shader[name].hitbox([figure[name]['center']['x'],figure[name]['center']['y'],figure[name]['center']['z']],[figure[name]['size']['x'],figure[name]['size']['y'],figure[name]['size']['z']])
                 try:
                     self.progs.shader[name].shader['color'].value = figure[name]['color']['r']/255, figure[name]['color']['g']/255, figure[name]['color']['b']/255, figure[name]['color']['a']
                 except KeyError:
                     pass
+    def hi(self, hit, camera):
+        #top
+        # camera[0] = x,  camera[1] = y,  camera[2] = z  
+        if camera[0] < hit[4][0] and camera[1] < hit[4][1] + .25 and camera[1] > hit[7][1] and camera[0] > hit[7][0] and camera[2] < hit[4][2] and camera[2] > hit[7][2]:
+            camera = [True, camera[0],hit[4][1]+0.25,camera[2]]
+        #bottom
+        if camera[0] < hit[2][0] and camera[1] > hit[2][1] - 0.25 and camera[1] < hit[2][1] and camera[0] > hit[0][0] and camera[2] < hit[2][2] and camera[2] > hit[0][2]:
+            camera = [True, camera[0], hit[3][1] - 0.25,camera[2]]
+        #left [1, -1, -1] [-1, 1, -1] 2 7
+        if camera[0] < hit[3][0] and camera[1] < hit[7][1] and camera[1] > hit[2][1] and camera[0] > hit[7][0] and camera[2] < hit[7][2] and camera[2] > hit[3][2] - .25:
+            camera = [True, camera[0],camera[1],hit[3][2] - 0.25]
+        #right [1,1,1] [-1,-1,1] 4 1
+        if camera[0] < hit[4][0] and camera[1] < hit[4][1] and camera[1] > hit[1][1] and camera[0] > hit[1][0] and camera[2] > hit[1][2] and camera[2] < hit[4][2] + .25:
+            camera = [True, camera[0],camera[1], hit[4][2] + 0.25]
+        #front [1,1,1] [1, -1, -1] 3 4
+        if camera[0] < hit[4][0] + 0.25 and camera[1] < hit[4][1] and camera[1] > hit[3][1] and camera[0] > hit[3][0] and camera[2] > hit[3][2] and camera[2] < hit[4][2]:
+            camera = [True, hit[4][0] + 0.25,camera[1],camera[2]]
+        #back [-1, 1, 1] [-1, -1, -1] 6 0
+        if camera[0] > hit[6][0] - 0.25 and camera[1] < hit[6][1] and camera[1] > hit[0][1] and camera[0] < hit[0][0] and camera[2] > hit[0][2] and camera[2] < hit[6][2]:
+            camera = [True, hit[6][0] - 0.25,camera[1],camera[2]]
+        if camera[0] != True:
+            camera = [False]
+        return camera
         '''
         time = self.tick
 

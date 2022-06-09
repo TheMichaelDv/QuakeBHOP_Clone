@@ -1,5 +1,6 @@
 from gettext import translation
 import moderngl_window as mglw
+import time
 from pyrr import Matrix44
 from moderngl.program import Program
 from moderngl_window.scene.camera import KeyboardCamera, OrbitCamera
@@ -7,10 +8,11 @@ from moderngl_window.context.glfw import Keys
 from moderngl_window.opengl.vao import VAO
 
 import math
+import numpy as np
 
 class CameraWindow(mglw.WindowConfig):
     """Base class with built in 3D camera support"""
-
+    _last_time = 0
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.camera = KeyboardCamera(self.wnd.keys, aspect_ratio=self.wnd.aspect_ratio, near = 0.15)
@@ -102,6 +104,7 @@ class simpleshader():
     def __init__(self, prog = None, name = None):
         self._shader = prog
         self.name = name
+        self.collision = None
     @property
     def shader(self):
         return self._shader
@@ -147,6 +150,17 @@ class simpleshader():
         self.shader['m_proj'].write(proj)
         self.shader['m_model'].write(Matrix44.from_translation(self.translation, dtype='f4') * Matrix44.from_eulers(self.rotation, dtype='f4'))
         self.shader['m_camera'].write(camera)
+    def hitbox(self, cuboidCtr, cuboidSize):
+        #4 5 6 7 top, 2 3 4 5 front, 7 3 left, 5 7 4 0 right, 6 7 1 0 back, 0 1 2 3 bottom
+        boolList = [[-1, -1, -1], [-1, -1, 1], [1, -1, 1], [1, -1, -1], [1, 1, 1],[1, 1, -1], [-1, 1, 1], [-1, 1, -1]]
+        shape = []
+        for i in range(8):
+            temp = [0,0,0]
+            temp[0] = cuboidCtr[0] + boolList[i][0] * cuboidSize[0] / 2
+            temp[1] = cuboidCtr[1] + boolList[i][1] * cuboidSize[1] / 2
+            temp[2] = cuboidCtr[2] + boolList[i][2] * cuboidSize[2] / 2
+            shape.append(temp)
+        return np.array(shape,dtype='float64')
 class shaders():
 
     _shader = {

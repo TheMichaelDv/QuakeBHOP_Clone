@@ -4,9 +4,6 @@ from queue import Empty, Full
 from time import perf_counter_ns as ns
 import numpy as np
 from Resources.Models.level import *
-'''
-TODO: Add modularity and reuseablity
-'''
 
 class obj():
     

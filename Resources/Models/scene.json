@@ -28,7 +28,7 @@
         "sphere": "False",
         "collision": "True",
         "rectangle": "True",
-        "shader": "Texture.glsl",
+        "shader": "Simple Shader.glsl",
         "size": {
             "x": 4,
             "y": 3,
