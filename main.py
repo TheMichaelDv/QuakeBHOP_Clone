@@ -144,7 +144,9 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
         # Always bind the window framebuffer before calling render
         window.use()
         
-        proj, camera = window.config.render(delta, delta)
+        w = timer.next_frame()
+
+        proj, camera = window.config.render(w[0], w[1])
 
         try:
             buffer[1].put((proj, camera), block=False)
