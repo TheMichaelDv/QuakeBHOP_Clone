@@ -71,7 +71,7 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
     values = parse_args(args=args, parser=parser)
     config_cls.argv = values
     '''
-    if values.window == "glfw":
+    if values.window == "glfw":*
         window_cls = glfw.Window
     else
         window_cls = get_local_window_cls(values.window)
@@ -158,7 +158,7 @@ def run(config_cls: WindowConfig, timer=None, args=None) -> None:
         except Empty:
             pass
 
-        window.config.physics(delta, coords)
+        window.config.physics(w[0], coords)
 
         if not window.is_closing:
             window.swap_buffers()

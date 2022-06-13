@@ -4,6 +4,7 @@ from queue import Empty, Full
 from time import perf_counter_ns as ns
 import numpy as np
 from Resources.Models.level import *
+import math
 
 class obj():
     
@@ -79,7 +80,9 @@ def physics(queue):
     frametime = 19000000
     delta = 1000000000
 
-    lvl = scene('scene.json')
+    current_time = ns()/1000000000
+
+    lvl = scene('light.json')
     things = lvl.level    
 
     p = obj([name for name in things])
@@ -94,9 +97,10 @@ def physics(queue):
         while delta+(ns()-sleep) < frametime:
             kernel32.Sleep(1) 
         delta = ns()   
-
+        time = (ns()/1000000000 - current_time)/4
         #p.move('center',tran=np.array([0,0.01,0]))
         #p.move('sides', rot=np.array([0,0.01,0]))
+        p.set('sides', tran = np.array([math.sin(time) * 6, abs(math.cos(time) * 6), math.cos(time) * 6],dtype='float64'))
 
         try:
             queue[0].put((p.shapes, camera), block=False)

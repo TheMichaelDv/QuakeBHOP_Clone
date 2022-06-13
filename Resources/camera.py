@@ -3,7 +3,7 @@ import moderngl_window as mglw
 import time
 from pyrr import Matrix44
 from moderngl.program import Program
-from moderngl_window.scene.camera import KeyboardCamera, OrbitCamera
+from Resources.BaseCamera import KeyboardCamera
 from moderngl_window.context.glfw import Keys
 from moderngl_window.opengl.vao import VAO
 
@@ -59,9 +59,7 @@ class CameraWindow(mglw.WindowConfig):
                 self.camera.move_down(True)
             if action == self.keys.ACTION_RELEASE:
                 self.camera.move_down(False)
-        elif key == keys.C:
-            if action == self.keys.ACTION_PRESS:
-                self.camera.set_position(1,2,3)
+
     def mouse_position_event(self, x: int, y: int, dx, dy):
         if self.camera_enabled:
             self.camera.rot_state(-dx, -dy)
@@ -105,6 +103,7 @@ class simpleshader():
         self._shader = prog
         self.name = name
         self.collision = None
+        self.size = None
     @property
     def shader(self):
         return self._shader

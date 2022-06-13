@@ -19,14 +19,6 @@ out vec3 pos;
 out vec3 normal;
 
 void main() {
-    /*
-    mat4 m_view = m_camera * m_model;
-    vec4 p = m_view * vec4(in_position, 1.0);
-    gl_Position =  m_proj * p;
-    mat3 m_normal = inverse(transpose(mat3(m_view)));
-    normal = m_normal * normalize(in_normal);
-    pos = vec3(1,1,1);
-    */
     pos = vec3(m_model * vec4(in_position, 1.0));
     normal = in_normal;  
     
@@ -43,10 +35,6 @@ in vec3 pos;
 in vec3 normal;
 
 void main() {
-    float ambientStrength = 0.6;
-    vec3 ambient = ambientStrength * vec3(1,1,1);
-
-    vec3 result = ambient * vec3(1,1,1);
     fragColor = color;// * color This determines final color. Usually we define a uniform so we can modify it in python
 }
 #endif
