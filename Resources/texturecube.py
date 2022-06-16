@@ -1,14 +1,8 @@
 "DO NOT RUN ANYMORE USE main.py"
-from datetime import timedelta
-from inspect import FrameInfo
-from os import truncate
 from pathlib import Path
-from turtle import pos
 from pyrr import Matrix44 
 
 import moderngl
-import pygame
-import moderngl_window
 from moderngl_window import geometry
 from Resources.camera import *
 from Resources.Models.level import *
@@ -30,6 +24,7 @@ class Game(CameraWindow):
 
         self.gravity = False
         self.gravity_constant = -0.01
+        self.velocity = 0
         self.last_time = 0
 
         self.keys = Keys()
@@ -63,7 +58,7 @@ class Game(CameraWindow):
             time = time
         )
         '''
-        self.progs.shader['center'].shader['lightpos'].value = math.sin(time) * 6, abs(math.cos(time) * 6), math.cos(time) * 6
+        self.progs.shader['center'].shader['lightpos'].value = math.sin(time) * 6, abs(math.cos(time) * 6 + 2), math.cos(time) * 6
 
         self.objects['cubes'].rendprog(self.progs,self.camera.projection.matrix, self.camera.matrix)
         self.objects['spheres'].rendprog(self.progs,self.camera.projection.matrix, self.camera.matrix)
@@ -75,10 +70,12 @@ class Game(CameraWindow):
             self.progs.shader[name].translation = matrices[0][name]['tran']
             self.progs.shader[name].rotation = matrices[0][name]['rot']
         if self.gravity:
-            l = self.camera.position
-            self.camera.set_position(l[0], l[1] + 0.5*self.gravity_constant*((time-self.last_time)**2), l[2])
-            if self.gravity_constant >= -0.01:
-                self.gravity_constant -= 0.01
+            l = self.camera.position 
+            self.camera.set_position(l[0], l[1] + self.velocity * (time-self.last_time) +  0.5*self.gravity_constant*((time-self.last_time)**2), l[2])
+            if self.velocity < 0.01 and self.velocity > -0.01:
+                self.velocity = 0
+            else:
+                self.velocity += self.gravity_constant
         else:
             self.last_time = time
         for name in matrices[0].keys():
@@ -88,7 +85,7 @@ class Game(CameraWindow):
                 self.camera.set_position(pos[1],pos[2],pos[3])
                 break
     def load_level(self):
-        level = scene('light.json')
+        level = scene('scene.json')
         figure = level.level
         for name in figure:
             if figure[name]['rectangle'] == TRUE:
@@ -103,7 +100,7 @@ class Game(CameraWindow):
                 try: 
                     self.progs.shader[name].shader['color'].value = figure[name]['color']['r']/255, figure[name]['color']['g']/255, figure[name]['color']['b']/255
                     self.progs.shader[name].shader['lightColor'].value = 1, 1, 1
-                    self.progs.shader[name].shader['lightpos'].value = 5, 5, 5
+                    self.progs.shader[name].shader['lightpos'].value = 0, 6, 0
                 except:
                     pass
         self.camera.set_position(0,15,0)
@@ -136,8 +133,12 @@ class Game(CameraWindow):
         keys = self.wnd.keys
         if key == keys.SPACE:
             if action == self.keys.ACTION_PRESS:
-                l = self.camera.position
-                self.camera.set_position(l[0], l[1] + 0.05, l[2])
-                self.gravity_constant = 1
+                if not self.gravity:
+                    l = self.camera.position
+                    self.camera.set_position(l[0], l[1] + 0.05, l[2])
+                    self.velocity = 0.4
+        elif key == keys.C:
+            if action == self.keys.ACTION_PRESS:
+                self.camera.set_position(0, 1.5, 0)
         else:
             super().key_event(key, action, modifiers)

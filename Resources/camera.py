@@ -1,13 +1,10 @@
-from gettext import translation
 import moderngl_window as mglw
-import time
 from pyrr import Matrix44
 from moderngl.program import Program
 from Resources.BaseCamera import KeyboardCamera
 from moderngl_window.context.glfw import Keys
 from moderngl_window.opengl.vao import VAO
 
-import math
 import numpy as np
 
 class CameraWindow(mglw.WindowConfig):
@@ -45,20 +42,6 @@ class CameraWindow(mglw.WindowConfig):
                 self.camera.move_backward(True)
             if action == self.keys.ACTION_RELEASE:
                 self.camera.move_backward(False)
-        elif key == keys.F:
-            self.camera_enabled = not self.camera_enabled
-            self.wnd.mouse_exclusivity = self.camera_enabled
-            self.wnd.cursor = not self.camera_enabled
-        elif key == keys.SPACE:
-            if action == self.keys.ACTION_PRESS:
-                self.camera.move_up(True)
-            if action == self.keys.ACTION_RELEASE:
-                self.camera.move_up(False)
-        elif key == keys.Z:
-            if action == self.keys.ACTION_PRESS:
-                self.camera.move_down(True)
-            if action == self.keys.ACTION_RELEASE:
-                self.camera.move_down(False)
 
     def mouse_position_event(self, x: int, y: int, dx, dy):
         if self.camera_enabled:

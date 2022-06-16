@@ -82,7 +82,7 @@ def physics(queue):
 
     current_time = ns()/1000000000
 
-    lvl = scene('light.json')
+    lvl = scene('scene.json')
     things = lvl.level    
 
     p = obj([name for name in things])
@@ -100,7 +100,7 @@ def physics(queue):
         time = (ns()/1000000000 - current_time)/4
         #p.move('center',tran=np.array([0,0.01,0]))
         #p.move('sides', rot=np.array([0,0.01,0]))
-        p.set('sides', tran = np.array([math.sin(time) * 6, abs(math.cos(time) * 6), math.cos(time) * 6],dtype='float64'))
+        #p.set('sides', tran = np.array([math.sin(time) * 6, abs(math.cos(time) * 6 + 2), math.cos(time) * 6],dtype='float64'))
 
         try:
             queue[0].put((p.shapes, camera), block=False)
